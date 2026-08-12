@@ -71,9 +71,9 @@ const register = [
   ),
   photo(
     "long-table",
-    "1414235077428-338989a2e8c0",
-    "A table mid-dinner — wine, candles and a plated course, close in",
-    "#6d5540",
+    "1511795409834-ef04bbd61622",
+    "A long table laid down its length with autumn flowers, glasses and place settings",
+    "#8a6f4a",
     "landscape",
   ),
   photo(
@@ -238,9 +238,9 @@ const register = [
   /* --- Detail ------------------------------------------------------------ */
   photo(
     "detail-table",
-    "1519225421980-715cb0215aed",
-    "A place setting on a long table, loose flowers down the middle",
-    "#4a4433",
+    "1519671482749-fd09be7ccebf",
+    "Glasses raised across a table, warm light behind them",
+    "#8a7050",
     "landscape",
   ),
   photo(
@@ -252,16 +252,16 @@ const register = [
   ),
   photo(
     "detail-paper",
-    "1544716278-ca5e3f4abd8c",
-    "An open notebook on a plain pale surface",
-    "#d3c9b7",
+    "1553915632-175f60dd8e36",
+    "Two gold bands resting on an open dictionary page",
+    "#c9bda2",
     "square",
   ),
   photo(
     "detail-invitations",
-    "1544716278-ca5e3f4abd8c",
-    "Paper laid out on a plain pale surface",
-    "#d3c9b7",
+    "1507504031003-b417219a0fde",
+    "A carved wooden sign hung in blossom",
+    "#c7bfa8",
     "square",
   ),
   photo(
@@ -308,9 +308,9 @@ const register = [
   ),
   photo(
     "detail-toast",
-    "1414235077428-338989a2e8c0",
-    "Wine poured and candles lit at a laid table",
-    "#6d5540",
+    "1470337458703-46ad1756a187",
+    "A drink being poured over ice at a bar",
+    "#8a6a3e",
     "landscape",
   ),
 
@@ -410,9 +410,9 @@ const register = [
   ),
   photo(
     "couple-coast",
-    "1507525428034-b723cf961d3e",
-    "The tide coming in over pale sand at the end of the day",
-    "#96b8bd",
+    "1537633552985-df8429e8048b",
+    "A couple on a shingle beach, veil taken by the wind, flat grey sea behind",
+    "#8e9698",
     "landscape",
   ),
   photo(
@@ -425,7 +425,7 @@ const register = [
   photo(
     "couple-table",
     "1414235077428-338989a2e8c0",
-    "A table mid-service, candles lit",
+    "A table mid-service, wine poured and a plated course set down",
     "#6d5540",
     "landscape",
   ),
@@ -454,23 +454,23 @@ const register = [
   /* --- Vendors ----------------------------------------------------------- */
   photo(
     "vendor-photography",
-    "1460978812857-470ed1c77af0",
-    "A black-and-white frame of a veil caught by the wind",
-    "#9a9490",
+    "1509927083803-4bd519298ac4",
+    "Two pairs of shoes on bare boards, one bridal, one brogue",
+    "#a89e90",
     "landscape",
   ),
   photo(
     "vendor-music",
-    "1502082553048-f009c37129b9",
-    "Hands over a set of decks in low, coloured light",
-    "#4a2d55",
+    "1494232410401-ad00d5433cfa",
+    "A cassette tape lying on a plain pale surface",
+    "#cfc9bd",
     "landscape",
   ),
   photo(
     "vendor-dj",
-    "1492684223066-81342ee5ff30",
-    "Confetti falling over a crowd under stage light",
-    "#6a5a8c",
+    "1524368535928-5b5e00ddc76b",
+    "A crowd late in the evening under warm stage light",
+    "#5a3a20",
     "landscape",
   ),
   photo(
@@ -496,9 +496,9 @@ const register = [
   ),
   photo(
     "vendor-suit",
-    "1594938298603-c8148c4dae35",
-    "A three-piece suit photographed close, no face in frame",
-    "#5b6377",
+    "1507679799987-c73779587ccf",
+    "A dark suit, cuff being fastened, no face in frame",
+    "#2f3138",
     "portrait",
   ),
 
@@ -526,16 +526,16 @@ const register = [
   ),
   photo(
     "land-interior",
-    "1600585154340-be6161a56a0c",
-    "A house at night with the lights on inside",
-    "#241f18",
+    "1543007630-9710e4a00a20",
+    "A warm bar interior under a run of filament lights",
+    "#6b4f30",
     "landscape",
   ),
   photo(
     "land-celebration",
-    "1492684223066-81342ee5ff30",
-    "Confetti in the air over a crowd",
-    "#6a5a8c",
+    "1478147427282-58a87a120781",
+    "Hands up in a dark room under one warm light",
+    "#3a2c1a",
     "landscape",
   ),
   photo(

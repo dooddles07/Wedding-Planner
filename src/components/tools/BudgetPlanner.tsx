@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 import { styleById, weddingStyles } from "@/content/styles";
 import {
   BUDGET_COLOURS,
@@ -12,6 +11,7 @@ import {
 } from "@/lib/budget";
 import { usePlanning } from "@/lib/store/planning";
 import { Chip } from "@/components/ui/Chip";
+import { AllocationRing } from "./AllocationRing";
 import { LeadForm } from "@/components/forms/LeadForm";
 import { cn, formatCurrency, formatNumber } from "@/lib/utils";
 
@@ -45,10 +45,6 @@ export function BudgetPlanner() {
   const totals = budgetTotals(items);
   const head = perHead(items, guests);
   const difference = totals.allocated - total;
-
-  const chartData = items
-    .filter((item) => item.allocated > 0)
-    .map((item) => ({ name: item.label, value: item.allocated, key: item.category }));
 
   return (
     <div className="pb-24">
@@ -277,28 +273,11 @@ export function BudgetPlanner() {
         <aside className="lg:sticky lg:top-32 lg:self-start">
           <div className="aspect-square w-full">
             {hydrated ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={chartData}
-                    dataKey="value"
-                    nameKey="name"
-                    innerRadius="58%"
-                    outerRadius="92%"
-                    startAngle={90}
-                    endAngle={-270}
-                    stroke="none"
-                    isAnimationActive={false}
-                  >
-                    {chartData.map((entry) => (
-                      <Cell
-                        key={entry.key}
-                        fill={BUDGET_COLOURS[entry.key as keyof typeof BUDGET_COLOURS]}
-                      />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
+              <AllocationRing
+                items={items}
+                total={totals.allocated}
+                label="How the budget divides"
+              />
             ) : (
               <div className="h-full w-full animate-pulse rounded-full border-[3rem] border-linen" />
             )}
