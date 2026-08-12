@@ -37,12 +37,12 @@ export function WhereWeWork() {
               {places.map((place) => (
                 <li
                   key={place.region}
-                  className="group flex items-baseline justify-between gap-6 border-b border-ink/12 py-3.5"
+                  className="group flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-ink/12 py-3.5"
                 >
                   <span className="font-display text-lg leading-tight transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1 sm:text-xl">
                     {place.region}
                   </span>
-                  <span className="shrink-0 text-right font-mono text-[0.6875rem] tracking-wide text-ink-50">
+                  <span className="text-right font-mono text-[0.6875rem] tracking-wide text-ink-50 sm:shrink-0">
                     {place.note}
                     <span className="ml-3 hidden text-ink-50 sm:inline">{place.country}</span>
                   </span>

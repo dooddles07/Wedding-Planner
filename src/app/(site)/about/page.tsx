@@ -148,10 +148,10 @@ export default function AboutPage() {
               {places.map((place) => (
                 <li
                   key={place.region}
-                  className="flex items-baseline justify-between gap-6 border-b border-ink/12 py-3.5"
+                  className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-ink/12 py-3.5"
                 >
                   <span className="font-display text-lg">{place.region}</span>
-                  <span className="shrink-0 font-mono text-[0.6875rem] tracking-wide text-ink-50">
+                  <span className="font-mono text-[0.6875rem] tracking-wide text-ink-50 sm:shrink-0">
                     {place.note}
                   </span>
                 </li>

@@ -75,7 +75,12 @@ export function Reveal({
           key={index}
         >
           <motion.span
-            className="inline-block whitespace-pre will-change-transform"
+            // pre-wrap, not pre. Each word carries its own trailing space, and
+            // normal white-space processing inside an inline-block eats it,
+            // running the headline together. Plain "pre" fixes that but stops
+            // a long line wrapping, which forces horizontal overflow on a
+            // phone. pre-wrap keeps the spaces and keeps the wrapping.
+            className="inline-block whitespace-pre-wrap will-change-transform"
             variants={{
               hidden: { y: "112%" },
               visible: {
@@ -84,8 +89,7 @@ export function Reveal({
               },
             }}
           >
-            {/* A trailing space collapses inside inline-block, so hold it. */}
-            {part === "" ? " " : part}
+            {part === "" ? " " : part}
           </motion.span>
         </span>
       ))}
