@@ -5,7 +5,6 @@ import { motion, useReducedMotion } from "motion/react";
 import type { TaskCategory } from "@/types";
 import { TASK_CATEGORY_LABEL, TIMELINE_BANDS } from "@/content/tasks";
 import { usePlanning } from "@/lib/store/planning";
-import { Container } from "@/components/editorial/Layout";
 import { Chip } from "@/components/ui/Chip";
 import { cn } from "@/lib/utils";
 
@@ -56,7 +55,7 @@ export function Checklist() {
   }).filter((band) => band.tasks.length > 0);
 
   return (
-    <Container className="pb-24">
+    <div className="pb-24">
       {/* --- Progress ------------------------------------------------------- */}
       <div className="sticky top-19 z-30 -mx-6 border-y border-ink/12 bg-paper/98 px-6 py-4 backdrop-blur-[2px] sm:-mx-8 sm:px-8 lg:-mx-12 lg:px-12">
         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -264,6 +263,6 @@ export function Checklist() {
           </p>
         </div>
       )}
-    </Container>
+    </div>
   );
 }

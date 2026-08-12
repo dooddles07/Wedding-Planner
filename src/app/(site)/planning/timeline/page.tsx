@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Timeline } from "@/components/tools/Timeline";
 import { PageHeader } from "@/components/editorial/PageHeader";
+import { Container } from "@/components/editorial/Layout";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbSchema, pageMetadata } from "@/lib/seo";
 
@@ -29,7 +30,9 @@ export default function TimelinePage() {
         standfirst="The same list as the checklist, read against your actual calendar. It will tell you what should already have happened, which is uncomfortable and useful in that order."
       />
 
-      <Timeline />
+      <Container>
+        <Timeline />
+      </Container>
     </>
   );
 }

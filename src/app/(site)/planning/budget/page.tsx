@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { BudgetPlanner } from "@/components/tools/BudgetPlanner";
 import { PageHeader } from "@/components/editorial/PageHeader";
+import { Container } from "@/components/editorial/Layout";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbSchema, pageMetadata } from "@/lib/seo";
 
@@ -29,7 +30,9 @@ export default function BudgetPage() {
         standfirst="Move the sliders. Guest count changes the shape of a budget far more than the total does, and you can feel that here in about five seconds. Every line is editable — your number always wins."
       />
 
-      <BudgetPlanner />
+      <Container>
+        <BudgetPlanner />
+      </Container>
     </>
   );
 }

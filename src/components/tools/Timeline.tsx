@@ -4,7 +4,6 @@ import { useMemo, useSyncExternalStore } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { TASK_CATEGORY_LABEL, TIMELINE_BANDS } from "@/content/tasks";
 import { usePlanning } from "@/lib/store/planning";
-import { Container } from "@/components/editorial/Layout";
 import { daysUntil } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
@@ -79,7 +78,7 @@ export function Timeline() {
   );
 
   return (
-    <Container className="pb-24">
+    <div className="pb-24">
       {/* --- The date ------------------------------------------------------- */}
       <div className="border-y border-ink/12 py-8">
         <div className="flex flex-wrap items-end justify-between gap-8">
@@ -221,6 +220,6 @@ export function Timeline() {
         Everything is saved in this browser. Ticking here also ticks it on the
         checklist — it is the same list, read the other way round.
       </p>
-    </Container>
+    </div>
   );
 }

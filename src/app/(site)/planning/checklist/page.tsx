@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Checklist } from "@/components/tools/Checklist";
 import { PageHeader } from "@/components/editorial/PageHeader";
+import { Container } from "@/components/editorial/Layout";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbSchema, pageMetadata } from "@/lib/seo";
 
@@ -29,7 +30,9 @@ export default function ChecklistPage() {
         standfirst="Grouped by how far out the work happens rather than by category, because that’s the question you’re actually asking. Tick as you go, add your own, and ignore the ones that don’t apply."
       />
 
-      <Checklist />
+      <Container>
+        <Checklist />
+      </Container>
     </>
   );
 }

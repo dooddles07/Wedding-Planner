@@ -24,7 +24,9 @@ export const TEMPLATES: {
     id: "first-light",
     name: "First light",
     note: "Dark, quiet, one photograph doing all the work.",
-    heroImageId: "first-light",
+    // The thumbnail advertises the treatment, not the couple's own photograph,
+    // so a dark template needs a dark plate behind its name.
+    heroImageId: "couple-dusk",
   },
   {
     id: "long-table",

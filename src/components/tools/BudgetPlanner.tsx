@@ -11,7 +11,6 @@ import {
   type PlanningLevel,
 } from "@/lib/budget";
 import { usePlanning } from "@/lib/store/planning";
-import { Container } from "@/components/editorial/Layout";
 import { Chip } from "@/components/ui/Chip";
 import { LeadForm } from "@/components/forms/LeadForm";
 import { cn, formatCurrency, formatNumber } from "@/lib/utils";
@@ -52,7 +51,7 @@ export function BudgetPlanner() {
     .map((item) => ({ name: item.label, value: item.allocated, key: item.category }));
 
   return (
-    <Container className="pb-24">
+    <div className="pb-24">
       {/* --- Inputs --------------------------------------------------------- */}
       <div className="border-y border-ink/12 py-8">
         <div className="grid gap-8 lg:grid-cols-2 lg:gap-16">
@@ -336,6 +335,6 @@ export function BudgetPlanner() {
           Everything is saved in this browser.
         </p>
       ) : null}
-    </Container>
+    </div>
   );
 }

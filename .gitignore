@@ -40,4 +40,4 @@ next-env.d.ts
 
 # local QA artefacts
 /.playwright-mcp/
-/public/__*.html
+/public/__*
