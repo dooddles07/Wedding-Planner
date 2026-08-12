@@ -51,7 +51,9 @@ export function Voices() {
             </AnimatePresence>
 
             <div className="mt-12">
-              <p className="eyebrow mb-4 text-ink-50">Also speaking</p>
+              {/* Not "also speaking" — the list includes whoever is on screen,
+                  marked with the underline. */}
+              <p className="eyebrow mb-4 text-ink-50">Who&rsquo;s speaking</p>
               <ul className="flex flex-wrap gap-x-6 gap-y-2">
                 {testimonials.map((item, i) => (
                   <li key={item.id}>
