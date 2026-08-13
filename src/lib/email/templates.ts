@@ -15,7 +15,7 @@ function base(content: string) {
 
 export function buildLeadEmail(lead: Lead) {
   return {
-    from: "Marram <noreply@marram.studio>",
+    from: "Marram <onboarding@resend.dev>",
     to: "hello@marram.studio",
     subject: `New enquiry — ${lead.source}`,
     html: base(`
@@ -36,7 +36,7 @@ export function buildLeadEmail(lead: Lead) {
 
 export function buildInquiryEmail(inquiry: Inquiry) {
   return {
-    from: "Marram <noreply@marram.studio>",
+    from: "Marram <onboarding@resend.dev>",
     to: "hello@marram.studio",
     subject: `Enquiry about ${inquiry.targetSlug} (${inquiry.targetType})`,
     html: base(`
@@ -55,7 +55,7 @@ export function buildInquiryEmail(inquiry: Inquiry) {
 
 export function buildRsvpEmail(rsvp: RsvpPayload, coupleEmail: string) {
   return {
-    from: "Marram <noreply@marram.studio>",
+    from: "Marram <onboarding@resend.dev>",
     to: coupleEmail,
     subject: `RSVP from ${rsvp.name}`,
     html: base(`
