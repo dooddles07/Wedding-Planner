@@ -4,6 +4,7 @@ import { useMemo, useSyncExternalStore } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { TASK_CATEGORY_LABEL, TIMELINE_BANDS } from "@/content/tasks";
 import { usePlanning } from "@/lib/store/planning";
+import { track } from "@/lib/analytics";
 import { daysUntil } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
@@ -90,9 +91,11 @@ export function Timeline() {
               id="wedding-date"
               type="date"
               value={weddingDate ?? ""}
-              onChange={(event) =>
-                setWedding({ weddingDate: event.target.value || null })
-              }
+              onChange={(event) => {
+                const date = event.target.value || null;
+                setWedding({ weddingDate: date });
+                if (date) track({ name: "timeline_saved" });
+              }}
               className="mt-2 block min-h-12 border-b border-ink/25 bg-transparent py-2 font-display text-[clamp(1.5rem,3vw,2.25rem)] leading-none outline-none transition-colors focus:border-ink"
             />
           </div>

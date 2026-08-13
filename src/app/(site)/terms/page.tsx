@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { brand } from "@/content/brand";
+import { brand, demoNotice } from "@/content/brand";
 import { PageHeader } from "@/components/editorial/PageHeader";
 import { Container } from "@/components/editorial/Layout";
 import { pageMetadata } from "@/lib/seo";
@@ -12,12 +12,16 @@ export const metadata: Metadata = pageMetadata({
 
 export default function TermsPage() {
   const sections = [
-    {
-      heading: "This is a demonstration build",
-      body: [
-        `${brand.name} is an invented wedding studio. Every wedding story, venue, supplier, couple and testimonial on this site was written to demonstrate the design and is not a record of real people or real businesses. Any resemblance to a real venue or supplier of the same name is coincidental.`,
-      ],
-    },
+    ...(demoNotice
+      ? [
+          {
+            heading: "This is a demonstration build",
+            body: [
+              `${brand.name} is an invented wedding studio. Every wedding story, venue, supplier, couple and testimonial on this site was written to demonstrate the design and is not a record of real people or real businesses. Any resemblance to a real venue or supplier of the same name is coincidental.`,
+            ],
+          },
+        ]
+      : []),
     {
       heading: "Prices are indicative",
       body: [

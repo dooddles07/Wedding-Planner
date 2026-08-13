@@ -10,10 +10,12 @@ import { VenueCard } from "@/components/cards/VenueCard";
 import { SaveButton } from "@/components/ui/SaveButton";
 import { PriceBand } from "@/components/ui/Chip";
 import { LeadForm } from "@/components/forms/LeadForm";
+import { TrackEvent } from "@/components/analytics/TrackEvent";
 import { TextLink } from "@/components/ui/Button";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbSchema, faqSchema, pageMetadata, venueSchema } from "@/lib/seo";
 import { formatCurrency, formatNumber } from "@/lib/utils";
+import { demoNotice } from "@/content/brand";
 
 export function generateStaticParams() {
   return venues.map((venue) => ({ slug: venue.slug }));
@@ -61,6 +63,7 @@ export default async function VenueDetailPage({
 
   return (
     <>
+      <TrackEvent event={{ name: "venue_viewed", slug: venue.slug }} />
       <JsonLd
         data={[
           venueSchema({
@@ -261,10 +264,12 @@ export default async function VenueDetailPage({
               </span>
             </a>
 
-            <p className="mt-6 font-mono text-[0.625rem] leading-relaxed tracking-wide text-ink-50">
-              Sample venue, invented for this build. Prices are indicative bands
-              rather than quotes.
-            </p>
+            {demoNotice ? (
+              <p className="mt-6 font-mono text-[0.625rem] leading-relaxed tracking-wide text-ink-50">
+                Sample venue, invented for this build. Prices are indicative bands
+                rather than quotes.
+              </p>
+            ) : null}
           </div>
         </div>
       </Container>
@@ -286,6 +291,7 @@ export default async function VenueDetailPage({
             <div className="bg-paper p-7 text-ink lg:p-10">
               <LeadForm
                 source="venue"
+                inquiry={{ targetSlug: venue.slug, targetType: "venue" }}
                 context={{ venue: venue.slug }}
                 submitLabel="Ask about this venue"
                 compact

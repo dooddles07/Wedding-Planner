@@ -11,6 +11,7 @@ import { ButtonLink, TextLink } from "@/components/ui/Button";
 import { SaveButton } from "@/components/ui/SaveButton";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { articleSchema, breadcrumbSchema, pageMetadata } from "@/lib/seo";
+import { TrackEvent } from "@/components/analytics/TrackEvent";
 
 export function generateStaticParams() {
   return weddings.map((wedding) => ({ slug: wedding.slug }));
@@ -75,6 +76,7 @@ export default async function WeddingStoryPage({
 
   return (
     <article>
+      <TrackEvent event={{ name: "wedding_story_viewed", slug: wedding.slug }} />
       <JsonLd
         data={[
           articleSchema({

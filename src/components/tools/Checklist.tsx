@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import type { TaskCategory } from "@/types";
 import { TASK_CATEGORY_LABEL, TIMELINE_BANDS } from "@/content/tasks";
 import { usePlanning } from "@/lib/store/planning";
+import { track } from "@/lib/analytics";
 import { Chip } from "@/components/ui/Chip";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +23,10 @@ export function Checklist() {
   const addTask = usePlanning((state) => state.addTask);
   const removeTask = usePlanning((state) => state.removeTask);
   const reduced = useReducedMotion();
+
+  useEffect(() => {
+    if (hydrated) track({ name: "checklist_started" });
+  }, [hydrated]);
 
   const [categories, setCategories] = useState<TaskCategory[]>([]);
   const [hideDone, setHideDone] = useState(false);

@@ -37,20 +37,24 @@ export function NewsletterForm({
     setError(null);
     setState("sending");
 
-    await repository.createLead({
-      name: "",
-      email: parsed.data.email,
-      weddingDate: null,
-      location: null,
-      guestCount: null,
-      message: null,
-      source: "newsletter",
-      context: { location },
-    });
-
-    track({ name: "newsletter_signup", location });
-    setState("done");
-    toast.success(voice.newsletter.confirmation);
+    try {
+      await repository.createLead({
+        name: "",
+        email: parsed.data.email,
+        weddingDate: null,
+        location: null,
+        guestCount: null,
+        message: null,
+        source: "newsletter",
+        context: { location },
+      });
+      track({ name: "newsletter_signup", location });
+      setState("done");
+      toast.success(voice.newsletter.confirmation);
+    } catch {
+      setState("idle");
+      setError("Something went wrong. Please try again.");
+    }
   }
 
   if (state === "done") {

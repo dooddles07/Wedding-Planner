@@ -31,12 +31,14 @@ type Errors = Partial<Record<keyof Values, string>>;
 export function LeadForm({
   source,
   context = {},
+  inquiry,
   submitLabel = "Send it",
   compact = false,
   className,
 }: {
   source: LeadSource;
   context?: Record<string, unknown>;
+  inquiry?: { targetSlug: string; targetType: "venue" | "vendor" };
   submitLabel?: string;
   compact?: boolean;
   className?: string;
@@ -82,16 +84,28 @@ export function LeadForm({
 
     setState("sending");
     try {
-      await repository.createLead({
-        name: parsed.data.name,
-        email: parsed.data.email,
-        weddingDate: parsed.data.weddingDate || null,
-        location: parsed.data.location || null,
-        guestCount: parsed.data.guestCount ? Number(parsed.data.guestCount) : null,
-        message: parsed.data.message || null,
-        source,
-        context,
-      });
+      if (inquiry) {
+        await repository.createInquiry({
+          targetSlug: inquiry.targetSlug,
+          targetType: inquiry.targetType,
+          name: parsed.data.name,
+          email: parsed.data.email,
+          weddingDate: parsed.data.weddingDate || null,
+          message: parsed.data.message || "",
+        });
+      } else {
+        await repository.createLead({
+          name: parsed.data.name,
+          email: parsed.data.email,
+          weddingDate: parsed.data.weddingDate || null,
+          location: parsed.data.location || null,
+          guestCount: parsed.data.guestCount ? Number(parsed.data.guestCount) : null,
+          message: parsed.data.message || null,
+          source,
+          context,
+        });
+      }
+      if (source === "guide") track({ name: "guide_downloaded" });
       track({ name: "lead_form_completed", source });
       track({ name: "consultation_requested", source });
       setState("done");

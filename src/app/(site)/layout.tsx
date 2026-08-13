@@ -1,5 +1,6 @@
 import { Header } from "@/components/chrome/Header";
 import { Footer } from "@/components/chrome/Footer";
+import { PageViewTracker } from "@/components/analytics/PageViewTracker";
 
 /**
  * The public site. Header floats over whatever ground is beneath it, so
@@ -11,6 +12,7 @@ export default function SiteLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <>
+      <PageViewTracker />
       <Header />
       <main id="main">{children}</main>
       <Footer />

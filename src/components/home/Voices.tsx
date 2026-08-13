@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { testimonials } from "@/content/testimonials";
+import { demoNotice } from "@/content/brand";
 import { Chapter, Ground } from "@/components/editorial/Layout";
 import { Photo } from "@/components/editorial/Photo";
 import { cn } from "@/lib/utils";
@@ -73,9 +74,11 @@ export function Voices() {
                   </li>
                 ))}
               </ul>
-              <p className="mt-6 font-mono text-[0.625rem] leading-relaxed tracking-wide text-ink-50">
-                Sample quotes. Written to show the shape of a real one.
-              </p>
+              {demoNotice ? (
+                <p className="mt-6 font-mono text-[0.625rem] leading-relaxed tracking-wide text-ink-50">
+                  Sample quotes. Written to show the shape of a real one.
+                </p>
+              ) : null}
             </div>
           </div>
 

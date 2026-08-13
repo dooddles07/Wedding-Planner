@@ -10,10 +10,12 @@ import { VendorCard } from "@/components/cards/VendorCard";
 import { SaveButton } from "@/components/ui/SaveButton";
 import { PriceBand } from "@/components/ui/Chip";
 import { LeadForm } from "@/components/forms/LeadForm";
+import { TrackEvent } from "@/components/analytics/TrackEvent";
 import { TextLink } from "@/components/ui/Button";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbSchema, pageMetadata } from "@/lib/seo";
 import { formatCurrency } from "@/lib/utils";
+import { demoNotice } from "@/content/brand";
 
 export function generateStaticParams() {
   return vendors.map((vendor) => ({ slug: vendor.slug }));
@@ -72,6 +74,7 @@ export default async function VendorProfilePage({
 
   return (
     <>
+      <TrackEvent event={{ name: "vendor_viewed", slug: vendor.slug }} />
       <JsonLd
         data={breadcrumbSchema([
           { name: "Home", path: "/" },
@@ -153,9 +156,11 @@ export default async function VendorProfilePage({
               ))}
             </div>
 
-            <p className="mt-9 font-mono text-[0.625rem] leading-relaxed tracking-wide text-ink-50">
-              Sample profile, invented for this build. We take no commission.
-            </p>
+            {demoNotice ? (
+              <p className="mt-9 font-mono text-[0.625rem] leading-relaxed tracking-wide text-ink-50">
+                Sample profile, invented for this build. We take no commission.
+              </p>
+            ) : null}
           </aside>
         </div>
       </Container>
@@ -176,6 +181,7 @@ export default async function VendorProfilePage({
             </div>
             <LeadForm
               source="vendor"
+              inquiry={{ targetSlug: vendor.slug, targetType: "vendor" }}
               context={{ vendor: vendor.slug, category: vendor.category }}
               submitLabel="Check availability"
               compact

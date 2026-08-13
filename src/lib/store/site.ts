@@ -48,6 +48,7 @@ interface SiteState extends WeddingSite {
   update: (patch: Partial<WeddingSite>) => void;
   publish: () => void;
   unpublish: () => void;
+  slugSuffix: string | null;
 }
 
 const initial: WeddingSite = {
@@ -82,6 +83,7 @@ export const useSite = create<SiteState>()(
     (set, get) => ({
       ...initial,
       hydrated: false,
+      slugSuffix: null,
       setHydrated: () => set({ hydrated: true }),
 
       update: (patch) => {
@@ -101,11 +103,13 @@ export const useSite = create<SiteState>()(
 
       publish: () => {
         const state = get();
-        const slug =
+        const suffix = state.slugSuffix ?? Math.random().toString(36).slice(2, 6);
+        const base =
           state.slug ||
           slugify(`${state.partnerOne}-and-${state.partnerTwo}`) ||
           "our-wedding";
-        set({ published: true, slug, updatedAt: new Date().toISOString() });
+        const slug = `${base}-${suffix}`;
+        set({ published: true, slug, slugSuffix: suffix, updatedAt: new Date().toISOString() });
         track({ name: "wedding_site_published", slug });
       },
 
