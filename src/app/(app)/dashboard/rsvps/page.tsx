@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
-import { createServerClient } from "@/lib/supabase/server";
+import { desc, eq, inArray } from "drizzle-orm";
+import { auth } from "@/lib/auth";
+import { db } from "@/lib/db/client";
+import { rsvps, weddingSites } from "@/lib/db/schema";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
@@ -10,34 +13,26 @@ export const metadata: Metadata = pageMetadata({
 });
 
 export default async function RsvpsPage() {
-  const supabase = await createServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const session = await auth();
+  const userId = session!.user!.id;
 
-  const { data: sites } = await supabase
-    .from("wedding_sites")
-    .select("slug")
-    .eq("user_id", user!.id);
+  const sites = await db
+    .select({ slug: weddingSites.slug })
+    .from(weddingSites)
+    .where(eq(weddingSites.userId, userId));
 
-  const slugs = (sites ?? []).map((s: { slug: string }) => s.slug);
+  const slugs = sites.map((s) => s.slug);
 
-  const { data: rsvps } = slugs.length
-    ? await supabase
-        .from("rsvps")
-        .select("*")
-        .in("site_slug", slugs)
-        .order("created_at", { ascending: false })
-    : { data: [] };
+  const all = slugs.length
+    ? await db
+        .select()
+        .from(rsvps)
+        .where(inArray(rsvps.siteSlug, slugs))
+        .orderBy(desc(rsvps.createdAt))
+    : [];
 
-  const all = rsvps ?? [];
-  const attending = all.filter(
-    (r: { attending: boolean }) => r.attending,
-  );
-  const totalGuests = attending.reduce(
-    (sum: number, r: { guests: number }) => sum + r.guests,
-    0,
-  );
+  const attending = all.filter((r) => r.attending);
+  const totalGuests = attending.reduce((sum, r) => sum + r.guests, 0);
 
   return (
     <div className="pt-12">
@@ -78,32 +73,23 @@ export default async function RsvpsPage() {
               </tr>
             </thead>
             <tbody>
-              {all.map(
-                (rsvp: {
-                  id: string;
-                  name: string;
-                  attending: boolean;
-                  guests: number;
-                  message: string | null;
-                  created_at: string;
-                }) => (
-                  <tr key={rsvp.id} className="border-b border-ink/8">
-                    <td className="py-4 pr-6">{rsvp.name}</td>
-                    <td className="py-4 pr-6">
-                      {rsvp.attending ? "Yes" : "No"}
-                    </td>
-                    <td className="py-4 pr-6">
-                      {rsvp.attending ? rsvp.guests : "—"}
-                    </td>
-                    <td className="py-4 pr-6 text-ink-70">
-                      {rsvp.message || "—"}
-                    </td>
-                    <td className="py-4 font-mono text-[0.6875rem] text-ink-50">
-                      {new Date(rsvp.created_at).toLocaleDateString("en-GB")}
-                    </td>
-                  </tr>
-                ),
-              )}
+              {all.map((rsvp) => (
+                <tr key={rsvp.id} className="border-b border-ink/8">
+                  <td className="py-4 pr-6">{rsvp.name}</td>
+                  <td className="py-4 pr-6">
+                    {rsvp.attending ? "Yes" : "No"}
+                  </td>
+                  <td className="py-4 pr-6">
+                    {rsvp.attending ? rsvp.guests : "—"}
+                  </td>
+                  <td className="py-4 pr-6 text-ink-70">
+                    {rsvp.message || "—"}
+                  </td>
+                  <td className="py-4 font-mono text-[0.6875rem] text-ink-50">
+                    {rsvp.createdAt.toLocaleDateString("en-GB")}
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

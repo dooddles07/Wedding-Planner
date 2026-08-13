@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { createServerClient, createServiceClient } from "@/lib/supabase/server";
+import { eq } from "drizzle-orm";
+import { db } from "@/lib/db/client";
+import { rsvps, users, weddingSites } from "@/lib/db/schema";
 import { sendRsvpEmail } from "@/lib/email/send";
 
 const schema = z.object({
@@ -20,10 +22,9 @@ export async function POST(request: Request) {
   }
 
   const data = parsed.data;
-  const supabase = await createServerClient();
 
-  await supabase.from("rsvps").insert({
-    site_slug: data.siteSlug,
+  await db.insert(rsvps).values({
+    siteSlug: data.siteSlug,
     name: data.name,
     email: data.email || null,
     attending: data.attending,
@@ -31,19 +32,21 @@ export async function POST(request: Request) {
     message: data.message || null,
   });
 
-  const service = await createServiceClient();
-  const { data: site } = await service
-    .from("wedding_sites")
-    .select("user_id")
-    .eq("slug", data.siteSlug)
-    .single();
+  const [site] = await db
+    .select({ userId: weddingSites.userId })
+    .from(weddingSites)
+    .where(eq(weddingSites.slug, data.siteSlug))
+    .limit(1);
 
-  if (site?.user_id) {
-    const { data: userData } = await service.auth.admin.getUserById(
-      site.user_id,
-    );
-    if (userData?.user?.email) {
-      sendRsvpEmail(data, userData.user.email).catch(() => undefined);
+  if (site?.userId) {
+    const [owner] = await db
+      .select({ email: users.email })
+      .from(users)
+      .where(eq(users.id, site.userId))
+      .limit(1);
+
+    if (owner?.email) {
+      sendRsvpEmail(data, owner.email).catch(() => undefined);
     }
   }
 

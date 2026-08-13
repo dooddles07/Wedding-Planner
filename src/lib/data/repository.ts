@@ -1,12 +1,10 @@
 import type { Inquiry, Lead } from "@/types";
-import { storage } from "./storage";
 
 /**
  * Writes that would leave the browser in production: leads and inquiries.
  *
- * The interface is the swap point. `localRepository` keeps them in the
- * browser and posts them to /api/lead so there is one real network call to
- * point at a CRM, an inbox or a database later.
+ * Neon has no client-safe query layer (unlike Supabase's PostgREST), so every
+ * write goes through an API route — Drizzle only ever runs server-side.
  */
 export interface Repository {
   createLead(input: Omit<Lead, "id" | "createdAt">): Promise<Lead>;
@@ -14,61 +12,30 @@ export interface Repository {
   listLeads(): Promise<Lead[]>;
 }
 
-function id() {
-  return typeof crypto !== "undefined" && "randomUUID" in crypto
-    ? crypto.randomUUID()
-    : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-}
-
-async function read<T>(key: string): Promise<T[]> {
-  const raw = await storage.getItem(key);
-  if (!raw) return [];
-  try {
-    const parsed: unknown = JSON.parse(raw);
-    return Array.isArray(parsed) ? (parsed as T[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-async function write<T>(key: string, value: T[]): Promise<void> {
-  await storage.setItem(key, JSON.stringify(value));
-}
-
-export const localRepository: Repository = {
+export const repository: Repository = {
   async createLead(input) {
-    const lead: Lead = { ...input, id: id(), createdAt: new Date().toISOString() };
-
-    const existing = await read<Lead>("leads");
-    await write("leads", [lead, ...existing]);
-
-    // The one real network call in the product. Failure is not surfaced to
-    // the couple — their submission is already saved locally.
-    void fetch("/api/lead", {
+    const res = await fetch("/api/lead", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(lead),
-    }).catch(() => undefined);
-
-    return lead;
+      body: JSON.stringify(input),
+    });
+    if (!res.ok) throw new Error("Failed to create lead");
+    return res.json();
   },
 
   async createInquiry(input) {
-    const inquiry: Inquiry = {
-      ...input,
-      id: id(),
-      createdAt: new Date().toISOString(),
-    };
-    const existing = await read<Inquiry>("inquiries");
-    await write("inquiries", [inquiry, ...existing]);
-    return inquiry;
+    const res = await fetch("/api/inquiry", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(input),
+    });
+    if (!res.ok) throw new Error("Failed to create inquiry");
+    return res.json();
   },
 
   async listLeads() {
-    return read<Lead>("leads");
+    const res = await fetch("/api/lead");
+    if (!res.ok) return [];
+    return res.json();
   },
 };
-
-import { supabaseRepository } from "./supabase-repository";
-
-export const repository: Repository = supabaseRepository;

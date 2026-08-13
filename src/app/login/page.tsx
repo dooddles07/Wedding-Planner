@@ -6,31 +6,10 @@ export const metadata: Metadata = { title: "Sign in" };
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{
-    next?: string;
-    sent?: string;
-    email?: string;
-    error?: string;
-  }>;
+  searchParams: Promise<{ next?: string; error?: string }>;
 }) {
   const params = await searchParams;
   const next = params.next ?? "/dashboard";
-
-  if (params.sent) {
-    return (
-      <main className="flex min-h-dvh items-center justify-center px-6">
-        <div className="w-full max-w-sm">
-          <h1 className="font-display text-3xl font-light">
-            Check your inbox
-          </h1>
-          <p className="mt-4 font-sans text-base leading-relaxed text-ink-70">
-            We sent a link to <strong>{params.email}</strong>. Click it to sign
-            in — no password needed.
-          </p>
-        </div>
-      </main>
-    );
-  }
 
   return (
     <main className="flex min-h-dvh items-center justify-center px-6">
@@ -47,9 +26,7 @@ export default async function LoginPage({
             role="alert"
             className="mt-6 border-l-2 border-ember pl-4 font-sans text-sm text-ink-70"
           >
-            {params.error === "auth" || params.error === "oauth"
-              ? "Something went wrong. Please try again."
-              : params.error}
+            Something went wrong. Please try again.
           </p>
         ) : null}
 

@@ -1,8 +1,19 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { createServerClient } from "@/lib/supabase/server";
+import { and, eq } from "drizzle-orm";
+import { db } from "@/lib/db/client";
+import { weddingSites } from "@/lib/db/schema";
 import { CoupleSite } from "@/components/site-builder/CoupleSite";
 import type { WeddingSite } from "@/types";
+
+async function getSite(slug: string) {
+  const [row] = await db
+    .select({ data: weddingSites.data })
+    .from(weddingSites)
+    .where(and(eq(weddingSites.slug, slug), eq(weddingSites.published, true)))
+    .limit(1);
+  return row?.data as WeddingSite | undefined;
+}
 
 export async function generateMetadata({
   params,
@@ -10,17 +21,9 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const supabase = await createServerClient();
-  const { data } = await supabase
-    .from("wedding_sites")
-    .select("data")
-    .eq("slug", slug)
-    .eq("published", true)
-    .single();
+  const site = await getSite(slug);
+  if (!site) return {};
 
-  if (!data) return {};
-
-  const site = data.data as WeddingSite;
   return {
     title:
       site.partnerOne && site.partnerTwo
@@ -36,15 +39,8 @@ export default async function PublishedWeddingPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const supabase = await createServerClient();
-  const { data } = await supabase
-    .from("wedding_sites")
-    .select("data")
-    .eq("slug", slug)
-    .eq("published", true)
-    .single();
+  const site = await getSite(slug);
+  if (!site) notFound();
 
-  if (!data) notFound();
-
-  return <CoupleSite site={data.data as WeddingSite} />;
+  return <CoupleSite site={site} />;
 }
