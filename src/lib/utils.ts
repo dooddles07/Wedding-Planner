@@ -36,7 +36,13 @@ export function clamp(value: number, min: number, max: number) {
 
 /** Whole days from today until the given date. Negative once it has passed. */
 export function daysUntil(date: Date | string) {
-  const target = typeof date === "string" ? new Date(date) : date;
+  let target: Date;
+  if (typeof date === "string") {
+    const [y, m, d] = date.split("-").map(Number);
+    target = new Date(y, m - 1, d);
+  } else {
+    target = date;
+  }
   const startOfDay = (d: Date) =>
     new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
   const msPerDay = 86_400_000;

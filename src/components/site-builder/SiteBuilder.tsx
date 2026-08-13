@@ -33,6 +33,7 @@ const HERO_CHOICES = [
  * not a drag-and-drop editor: couples want a good page, not a canvas.
  */
 export function SiteBuilder() {
+  const hydrated = useSite((state) => state.hydrated);
   const site = useSite();
   const update = useSite((state) => state.update);
   const publish = useSite((state) => state.publish);
@@ -41,6 +42,8 @@ export function SiteBuilder() {
   const partnerOne = usePlanning((state) => state.partnerOne);
   const partnerTwo = usePlanning((state) => state.partnerTwo);
   const weddingDate = usePlanning((state) => state.weddingDate);
+
+  if (!hydrated) return null;
 
   const [tab, setTab] = useState<"edit" | "preview">("edit");
 

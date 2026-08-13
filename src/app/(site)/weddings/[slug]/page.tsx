@@ -60,11 +60,14 @@ export default async function WeddingStoryPage({
     { label: "Venue", value: wedding.venue },
     {
       label: "When",
-      value: new Date(wedding.date).toLocaleDateString("en-GB", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      }),
+      value: (() => {
+        const [y, m, d] = wedding.date.split("-").map(Number);
+        return new Date(y, m - 1, d).toLocaleDateString("en-GB", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
+      })(),
     },
     { label: "Guests", value: String(wedding.guestCount) },
     { label: "Style", value: styles.map((style) => style.name).join(", ") },

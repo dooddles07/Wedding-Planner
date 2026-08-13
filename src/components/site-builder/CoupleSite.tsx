@@ -25,12 +25,15 @@ export function CoupleSite({
       : site.partnerOne || site.partnerTwo || "Your names";
 
   const date = site.date
-    ? new Date(site.date).toLocaleDateString("en-GB", {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      })
+    ? (() => {
+        const [y, m, d] = site.date!.split("-").map(Number);
+        return new Date(y, m - 1, d).toLocaleDateString("en-GB", {
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
+      })()
     : null;
 
   const skin = {

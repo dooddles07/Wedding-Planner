@@ -47,15 +47,9 @@ export const browserStorage: StateStorage = {
 export const storage: StateStorage =
   typeof window === "undefined" ? noopStorage : browserStorage;
 
-/** Wipes every Marram key. Used by the reset control in dashboard settings. */
+const MANAGED_KEYS = ["planning", "wedding-site", "saves", "leads", "inquiries"] as const;
+
+/** Wipes every Marram key. Routes through the storage binding so a swapped backend is also cleared. */
 export function clearAllStoredData() {
-  if (typeof window === "undefined") return;
-  try {
-    const keys = Object.keys(window.localStorage).filter((k) =>
-      k.startsWith(PREFIX),
-    );
-    keys.forEach((k) => window.localStorage.removeItem(k));
-  } catch {
-    /* ignore */
-  }
+  MANAGED_KEYS.forEach((key) => storage.removeItem(key));
 }

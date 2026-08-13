@@ -20,27 +20,27 @@ function id() {
     : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
-function read<T>(key: string): T[] {
-  const raw = storage.getItem(key);
+async function read<T>(key: string): Promise<T[]> {
+  const raw = await storage.getItem(key);
   if (!raw) return [];
   try {
-    const parsed: unknown = JSON.parse(raw as string);
+    const parsed: unknown = JSON.parse(raw);
     return Array.isArray(parsed) ? (parsed as T[]) : [];
   } catch {
     return [];
   }
 }
 
-function write<T>(key: string, value: T[]) {
-  storage.setItem(key, JSON.stringify(value));
+async function write<T>(key: string, value: T[]): Promise<void> {
+  await storage.setItem(key, JSON.stringify(value));
 }
 
 export const localRepository: Repository = {
   async createLead(input) {
     const lead: Lead = { ...input, id: id(), createdAt: new Date().toISOString() };
 
-    const existing = read<Lead>("leads");
-    write("leads", [lead, ...existing]);
+    const existing = await read<Lead>("leads");
+    await write("leads", [lead, ...existing]);
 
     // The one real network call in the product. Failure is not surfaced to
     // the couple — their submission is already saved locally.
@@ -59,8 +59,8 @@ export const localRepository: Repository = {
       id: id(),
       createdAt: new Date().toISOString(),
     };
-    const existing = read<Inquiry>("inquiries");
-    write("inquiries", [inquiry, ...existing]);
+    const existing = await read<Inquiry>("inquiries");
+    await write("inquiries", [inquiry, ...existing]);
     return inquiry;
   },
 

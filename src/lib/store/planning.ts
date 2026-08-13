@@ -119,14 +119,18 @@ export const usePlanning = create<PlanningState>()(
           planningLevel: state.planningLevel,
         });
 
-        // Spend is the couple’s own record — never recalculated away.
+        // Both spend and manual allocation overrides are the couple’s own record — never recalculated away.
         const spendByCategory = new Map(
           state.budgetItems.map((item) => [item.category, item.spent]),
+        );
+        const allocByCategory = new Map(
+          state.budgetItems.map((item) => [item.category, item.allocated]),
         );
 
         set({
           budgetItems: next.map((item) => ({
             ...item,
+            allocated: allocByCategory.get(item.category) ?? item.allocated,
             spent: spendByCategory.get(item.category) ?? 0,
           })),
         });
