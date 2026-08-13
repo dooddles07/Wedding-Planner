@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { sendLeadEmail } from "@/lib/email/send";
+import { sendInquiryEmail } from "@/lib/email/send";
 
 export async function POST(request: Request) {
   try {
@@ -12,7 +12,7 @@ export async function POST(request: Request) {
       );
     }
 
-    sendLeadEmail(body).catch(() => undefined);
+    sendInquiryEmail(body).catch(() => undefined);
 
     return NextResponse.json({ ok: true });
   } catch {

@@ -69,4 +69,6 @@ export const localRepository: Repository = {
   },
 };
 
-export const repository: Repository = localRepository;
+import { supabaseRepository } from "./supabase-repository";
+
+export const repository: Repository = supabaseRepository;

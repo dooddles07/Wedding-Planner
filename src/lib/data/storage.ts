@@ -1,17 +1,9 @@
 import type { StateStorage } from "zustand/middleware";
-
-/**
- * The persistence backend, in one place.
- *
- * Every planning store writes through this. Today it is localStorage, which
- * means the whole product works with no account and no server. Replacing it
- * with Supabase (or anything else) means implementing three methods here —
- * no store, hook or component changes.
- */
+import { supabaseStorage } from "./supabase-storage";
+import { createClient } from "@/lib/supabase/client";
 
 const PREFIX = "marram:";
 
-/** Server renders have no storage. Returning nulls keeps SSR quiet. */
 const noopStorage: StateStorage = {
   getItem: () => null,
   setItem: () => undefined,
@@ -23,8 +15,6 @@ export const browserStorage: StateStorage = {
     try {
       return window.localStorage.getItem(PREFIX + name);
     } catch {
-      // Private browsing, disabled storage, quota — none of these should
-      // break the page. The couple just loses persistence.
       return null;
     }
   },
@@ -44,12 +34,49 @@ export const browserStorage: StateStorage = {
   },
 };
 
+function createAuthAwareStorage(): StateStorage {
+  return {
+    async getItem(key) {
+      if (typeof window === "undefined") return null;
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) return supabaseStorage.getItem(key);
+      return browserStorage.getItem(key);
+    },
+    async setItem(key, value) {
+      if (typeof window === "undefined") return;
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) return supabaseStorage.setItem(key, value);
+      return browserStorage.setItem(key, value);
+    },
+    async removeItem(key) {
+      if (typeof window === "undefined") return;
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) return supabaseStorage.removeItem(key);
+      return browserStorage.removeItem(key);
+    },
+  };
+}
+
 export const storage: StateStorage =
-  typeof window === "undefined" ? noopStorage : browserStorage;
+  typeof window === "undefined" ? noopStorage : createAuthAwareStorage();
 
-const MANAGED_KEYS = ["planning", "wedding-site", "saves", "leads", "inquiries"] as const;
+const MANAGED_KEYS = [
+  "planning",
+  "wedding-site",
+  "saves",
+  "leads",
+  "inquiries",
+] as const;
 
-/** Wipes every Marram key. Routes through the storage binding so a swapped backend is also cleared. */
 export function clearAllStoredData() {
   MANAGED_KEYS.forEach((key) => storage.removeItem(key));
 }

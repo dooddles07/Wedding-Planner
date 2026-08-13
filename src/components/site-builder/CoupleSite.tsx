@@ -1,5 +1,6 @@
 import type { WeddingSite } from "@/types";
 import { Photo } from "@/components/editorial/Photo";
+import { RsvpForm } from "./RsvpForm";
 import { cn } from "@/lib/utils";
 
 /**
@@ -213,16 +214,7 @@ export function CoupleSite({
             <p className={cn("mx-auto mt-4 max-w-[36ch] font-sans text-base", skin.muted)}>
               Let us know either way. It genuinely helps.
             </p>
-            <button
-              type="button"
-              disabled
-              className="mt-7 inline-flex min-h-12 cursor-not-allowed items-center bg-ember px-8 font-mono text-[0.6875rem] tracking-[0.14em] text-ink uppercase opacity-90"
-            >
-              RSVP
-            </button>
-            <p className="mt-4 font-mono text-[0.625rem] tracking-wide opacity-60">
-              Demo build — the RSVP form is not wired to a mailbox.
-            </p>
+            <RsvpForm siteSlug={site.slug} skin={skin} />
           </section>
         ) : null}
       </div>

@@ -1,10 +1,13 @@
 import type { Metadata, Viewport } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import { Toaster } from "sonner";
 import { brand, voice } from "@/content/brand";
 import { fontVariables } from "@/lib/fonts";
 import { organisationSchema } from "@/lib/seo";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { SmoothScroll } from "@/components/chrome/SmoothScroll";
+import { AnalyticsSinkWirer } from "@/components/analytics/AnalyticsSinkWirer";
+import { LocalDataMigrator } from "@/components/auth/LocalDataMigrator";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -73,6 +76,9 @@ export default function RootLayout({
           }}
         />
         <JsonLd data={organisationSchema()} />
+        <AnalyticsSinkWirer />
+        <Analytics />
+        <LocalDataMigrator />
       </body>
     </html>
   );

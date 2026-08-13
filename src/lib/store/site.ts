@@ -111,9 +111,24 @@ export const useSite = create<SiteState>()(
         const slug = `${base}-${suffix}`;
         set({ published: true, slug, slugSuffix: suffix, updatedAt: new Date().toISOString() });
         track({ name: "wedding_site_published", slug });
+        void fetch("/api/publish-site", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...get(), published: true }),
+        }).catch(() => undefined);
       },
 
-      unpublish: () => set({ published: false }),
+      unpublish: () => {
+        const state = get();
+        set({ published: false });
+        if (state.slug) {
+          void fetch("/api/publish-site", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ slug: state.slug, published: false }),
+          }).catch(() => undefined);
+        }
+      },
     }),
     {
       name: "wedding-site",

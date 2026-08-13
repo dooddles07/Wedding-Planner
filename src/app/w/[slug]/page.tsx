@@ -1,25 +1,50 @@
+import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { PublishedSite } from "@/components/site-builder/PublishedSite";
+import { createServerClient } from "@/lib/supabase/server";
+import { CoupleSite } from "@/components/site-builder/CoupleSite";
+import type { WeddingSite } from "@/types";
 
-export const metadata: Metadata = {
-  title: "A wedding",
-  // A couple’s own page has no business in a search index.
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const supabase = await createServerClient();
+  const { data } = await supabase
+    .from("wedding_sites")
+    .select("data")
+    .eq("slug", slug)
+    .eq("published", true)
+    .single();
 
-/**
- * The published couple site.
- *
- * The content lives in the couple’s own browser in this build, so the page is
- * rendered on the client from that store. With a backend, this becomes a
- * server component that fetches by slug — the presentation component below it
- * would not change.
- */
+  if (!data) return {};
+
+  const site = data.data as WeddingSite;
+  return {
+    title:
+      site.partnerOne && site.partnerTwo
+        ? `${site.partnerOne} & ${site.partnerTwo}`
+        : "Our Wedding",
+    robots: { index: false, follow: false },
+  };
+}
+
 export default async function PublishedWeddingPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  return <PublishedSite slug={slug} />;
+  const supabase = await createServerClient();
+  const { data } = await supabase
+    .from("wedding_sites")
+    .select("data")
+    .eq("slug", slug)
+    .eq("published", true)
+    .single();
+
+  if (!data) notFound();
+
+  return <CoupleSite site={data.data as WeddingSite} />;
 }
