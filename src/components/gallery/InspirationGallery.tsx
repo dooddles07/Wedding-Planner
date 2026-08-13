@@ -41,7 +41,12 @@ export function InspirationGallery() {
   const params = useSearchParams();
   const reduced = useReducedMotion();
 
-  const [query, setQuery] = useState(params.get("q") ?? "");
+  const urlQuery = params.get("q") ?? "";
+  const [query, setQuery] = useState(urlQuery);
+
+  useEffect(() => {
+    setQuery(urlQuery);
+  }, [urlQuery]);
   const [openSlug, setOpenSlug] = useState<string | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [savedOnly, setSavedOnly] = useState(false);

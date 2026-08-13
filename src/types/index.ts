@@ -458,7 +458,7 @@ export interface WeddingSite {
   venue: string;
   story: string;
   heroImageId: string;
-  schedule: { time: string; title: string; detail: string }[];
+  schedule: { id?: string; time: string; title: string; detail: string }[];
   travel: string;
   accommodation: string;
   dressCode: string;

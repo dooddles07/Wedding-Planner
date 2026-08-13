@@ -354,7 +354,7 @@ export const vendorBySlug = Object.fromEntries(
 ) as Record<string, Vendor>;
 
 export const vendorFacets = {
-  categories: [...new Set(vendors.map((vendor) => vendor.category))],
+  categories: [...new Set(vendors.map((vendor) => vendor.category))].sort(),
   locations: [...new Set(vendors.map((vendor) => vendor.location))].sort(),
   styles: [...new Set(vendors.flatMap((vendor) => vendor.styleIds))].sort(),
 };

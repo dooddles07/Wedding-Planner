@@ -403,7 +403,7 @@ export const VENUE_TYPE_LABEL: Record<VenueType, string> = {
 };
 
 export const venueFacets = {
-  types: [...new Set(venues.map((venue) => venue.type))],
+  types: [...new Set(venues.map((venue) => venue.type))].sort(),
   regions: [...new Set(venues.map((venue) => venue.region))].sort(),
   styles: [...new Set(venues.flatMap((venue) => venue.styleIds))].sort(),
 };

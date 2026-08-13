@@ -180,7 +180,7 @@ export function Checklist() {
       </form>
 
       {/* --- The list --------------------------------------------------------- */}
-      {bands.length ? (
+      {hydrated ? bands.length ? (
         <div className="pt-12">
           {bands.map((band) => (
             <section
@@ -267,7 +267,7 @@ export function Checklist() {
               : "Try clearing the filters, or add something of your own above."}
           </p>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

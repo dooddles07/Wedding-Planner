@@ -243,7 +243,7 @@ export function SiteBuilder() {
             <legend className="eyebrow mb-5 text-ink-50">The day</legend>
             <div className="space-y-3">
               {site.schedule.map((entry, index) => (
-                <div key={index} className="flex flex-wrap items-center gap-3">
+                <div key={entry.id ?? String(index)} className="flex flex-wrap items-center gap-3">
                   <label className="sr-only" htmlFor={`sched-time-${index}`}>
                     Time for item {index + 1}
                   </label>
@@ -305,7 +305,7 @@ export function SiteBuilder() {
               type="button"
               onClick={() =>
                 update({
-                  schedule: [...site.schedule, { time: "", title: "", detail: "" }],
+                  schedule: [...site.schedule, { id: `entry-${Date.now()}-${Math.random().toString(36).slice(2, 5)}`, time: "", title: "", detail: "" }],
                 })
               }
               className="mt-5 min-h-11 border border-ink/25 px-5 font-mono text-[0.6875rem] tracking-[0.14em] uppercase transition-colors hover:border-ink"
