@@ -29,7 +29,16 @@ const LEVELS: { value: PlanningLevel; label: string }[] = [
  * you move. The couple can override any line — their number wins and is kept
  * when the model rebuilds, because a tool that argues with you is not a tool.
  */
-export function BudgetPlanner() {
+export function BudgetPlanner({
+  variant = "public",
+}: {
+  /**
+   * `"dashboard"` is an authenticated couple looking at their own account —
+   * they don't need to email themselves a copy of a plan they're already
+   * looking at, so the lead-capture form is dropped for that variant.
+   */
+  variant?: "public" | "dashboard";
+}) {
   const hydrated = usePlanning((state) => state.hydrated);
   const total = usePlanning((state) => state.budgetTotal);
   const guests = usePlanning((state) => state.guestCount);
@@ -289,22 +298,24 @@ export function BudgetPlanner() {
             the four things that actually move the numbers.
           </p>
 
-          <div className="mt-8 border-t border-ink/12 pt-8">
-            <h2 className="font-display text-2xl leading-tight font-light">
-              Save this plan
-            </h2>
-            <p className="mt-3 max-w-[36ch] font-sans text-sm leading-relaxed text-ink-70">
-              We&rsquo;ll send it back to you with notes on where we&rsquo;d push
-              and where we&rsquo;d pull.
-            </p>
-            <LeadForm
-              source="budget"
-              context={{ total, guests, location, styleId, level }}
-              submitLabel="Send me this plan"
-              compact
-              className="mt-5"
-            />
-          </div>
+          {variant === "dashboard" ? null : (
+            <div className="mt-8 border-t border-ink/12 pt-8">
+              <h2 className="font-display text-2xl leading-tight font-light">
+                Save this plan
+              </h2>
+              <p className="mt-3 max-w-[36ch] font-sans text-sm leading-relaxed text-ink-70">
+                We&rsquo;ll send it back to you with notes on where we&rsquo;d push
+                and where we&rsquo;d pull.
+              </p>
+              <LeadForm
+                source="budget"
+                context={{ total, guests, location, styleId, level }}
+                submitLabel="Send me this plan"
+                compact
+                className="mt-5"
+              />
+            </div>
+          )}
         </aside>
       </div>
 

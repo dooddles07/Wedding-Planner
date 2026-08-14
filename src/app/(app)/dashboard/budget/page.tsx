@@ -12,7 +12,7 @@ export const metadata: Metadata = pageMetadata({
 export default function DashboardBudgetPage() {
   return (
     <div className="pt-10">
-      <BudgetPlanner />
+      <BudgetPlanner variant="dashboard" />
     </div>
   );
 }

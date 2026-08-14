@@ -103,7 +103,24 @@ export const useSite = create<SiteState>()(
 
       publish: () => {
         const state = get();
-        const suffix = state.slugSuffix ?? Math.random().toString(36).slice(2, 6);
+
+        // Once a site has published before, `state.slug` already has the
+        // suffix baked in — reusing it verbatim (rather than appending the
+        // suffix again) is what actually keeps an unpublish → republish
+        // cycle on the same URL, instead of growing it by another suffix
+        // every time.
+        if (state.slugSuffix && state.slug) {
+          set({ published: true, updatedAt: new Date().toISOString() });
+          track({ name: "wedding_site_published", slug: state.slug });
+          void fetch("/api/publish-site", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...get(), published: true }),
+          }).catch(() => undefined);
+          return;
+        }
+
+        const suffix = Math.random().toString(36).slice(2, 6);
         const base =
           state.slug ||
           slugify(`${state.partnerOne}-and-${state.partnerTwo}`) ||
