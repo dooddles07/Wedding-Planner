@@ -29,7 +29,7 @@ export const brand = {
     pinterest: "https://pinterest.com",
   },
   /** Used for canonicals and OG. Override with NEXT_PUBLIC_SITE_URL in prod. */
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://marram.studio",
+  url: (process.env.NEXT_PUBLIC_SITE_URL ?? "https://marram.studio").replace(/\/+$/, ""),
 } as const;
 
 export const voice = {
