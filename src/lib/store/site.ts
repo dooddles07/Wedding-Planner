@@ -46,8 +46,8 @@ interface SiteState extends WeddingSite {
   hydrated: boolean;
   setHydrated: () => void;
   update: (patch: Partial<WeddingSite>) => void;
-  publish: () => void;
-  unpublish: () => void;
+  publish: () => Promise<{ ok: boolean; error?: string }>;
+  unpublish: () => Promise<{ ok: boolean; error?: string }>;
   slugSuffix: string | null;
 }
 
@@ -89,10 +89,15 @@ export const useSite = create<SiteState>()(
       update: (patch) => {
         const next = { ...patch, updatedAt: new Date().toISOString() };
 
-        // The slug follows the names until the couple has published, after
-        // which it is frozen — a published URL that changes is a broken one.
+        // The slug follows the names until the site has ever been
+        // published, after which it is frozen — a published URL that
+        // changes is a broken one. Gating on `published` alone re-opened
+        // the slug to name edits after unpublish(), silently dropping the
+        // suffix that made the URL collision-safe; `slugSuffix` records
+        // "has published before" independent of the current toggle. See
+        // audit P2-4.
         const state = get();
-        if (!state.published && (patch.partnerOne || patch.partnerTwo)) {
+        if (!state.slugSuffix && !state.published && (patch.partnerOne || patch.partnerTwo)) {
           const one = patch.partnerOne ?? state.partnerOne;
           const two = patch.partnerTwo ?? state.partnerTwo;
           if (one && two) Object.assign(next, { slug: slugify(`${one}-and-${two}`) });
@@ -101,7 +106,12 @@ export const useSite = create<SiteState>()(
         set(next as Partial<SiteState>);
       },
 
-      publish: () => {
+      // Both publish/unpublish now await the server response and only
+      // commit local state on success — previously the request was fired
+      // and forgotten (`.catch(() => undefined)`), so a 409 (slug taken),
+      // 401, or 500 was swallowed and the couple saw "published" for a
+      // page that was never actually written. See audit P1-3.
+      publish: async () => {
         const state = get();
 
         // Once a site has published before, `state.slug` already has the
@@ -109,42 +119,52 @@ export const useSite = create<SiteState>()(
         // suffix again) is what actually keeps an unpublish → republish
         // cycle on the same URL, instead of growing it by another suffix
         // every time.
-        if (state.slugSuffix && state.slug) {
-          set({ published: true, updatedAt: new Date().toISOString() });
-          track({ name: "wedding_site_published", slug: state.slug });
-          void fetch("/api/publish-site", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ...get(), published: true }),
-          }).catch(() => undefined);
-          return;
-        }
-
-        const suffix = Math.random().toString(36).slice(2, 6);
+        const reusingSlug = Boolean(state.slugSuffix && state.slug);
+        const suffix = reusingSlug ? state.slugSuffix! : Math.random().toString(36).slice(2, 6);
         const base =
           state.slug ||
           slugify(`${state.partnerOne}-and-${state.partnerTwo}`) ||
           "our-wedding";
-        const slug = `${base}-${suffix}`;
-        set({ published: true, slug, slugSuffix: suffix, updatedAt: new Date().toISOString() });
+        const slug = reusingSlug ? state.slug : `${base}-${suffix}`;
+        const updatedAt = new Date().toISOString();
+
+        try {
+          const res = await fetch("/api/publish-site", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...state, slug, published: true }),
+          });
+          if (!res.ok) {
+            const body = await res.json().catch(() => null);
+            return { ok: false, error: body?.error ?? "Could not publish." };
+          }
+        } catch {
+          return { ok: false, error: "Could not publish." };
+        }
+
+        set({ published: true, slug, slugSuffix: suffix, updatedAt });
         track({ name: "wedding_site_published", slug });
-        void fetch("/api/publish-site", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...get(), published: true }),
-        }).catch(() => undefined);
+        return { ok: true };
       },
 
-      unpublish: () => {
+      unpublish: async () => {
         const state = get();
-        set({ published: false });
-        if (state.slug) {
-          void fetch("/api/publish-site", {
+        if (!state.slug) {
+          set({ published: false });
+          return { ok: true };
+        }
+        try {
+          const res = await fetch("/api/publish-site", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ slug: state.slug, published: false }),
-          }).catch(() => undefined);
+          });
+          if (!res.ok) return { ok: false, error: "Could not take the page down." };
+        } catch {
+          return { ok: false, error: "Could not take the page down." };
         }
+        set({ published: false });
+        return { ok: true };
       },
     }),
     {

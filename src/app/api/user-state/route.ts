@@ -51,7 +51,11 @@ export async function PUT(request: Request) {
 
     return NextResponse.json({ ok: true });
   } catch {
-    return NextResponse.json({ error: "bad request" }, { status: 400 });
+    // Anything reaching here is past the safeParse check above, so it's a
+    // DB/network failure, not a client error — 500 says so and lets the
+    // client's setItem (which now throws on !res.ok) tell the couple their
+    // save didn't land instead of assuming it did. See audit P2-3.
+    return NextResponse.json({ error: "could not save" }, { status: 500 });
   }
 }
 
@@ -77,6 +81,6 @@ export async function DELETE(request: Request) {
 
     return NextResponse.json({ ok: true });
   } catch {
-    return NextResponse.json({ error: "bad request" }, { status: 400 });
+    return NextResponse.json({ error: "could not delete" }, { status: 500 });
   }
 }

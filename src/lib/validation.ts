@@ -75,7 +75,14 @@ export const publishSiteSchema = weddingSiteDataSchema
     published: z.boolean().optional(),
   });
 
+// The app only ever persists these keys (see MANAGED_KEYS in
+// src/lib/data/storage.ts and LOCAL_KEYS in src/lib/auth/migrate-local-data.ts).
+// Without an allowlist any authenticated user could PUT arbitrarily many
+// distinct keys, each up to 1MB, growing the table without bound. See audit
+// P2-1.
+const USER_STATE_KEYS = ["planning", "wedding-site", "saves", "leads", "inquiries"] as const;
+
 export const userStatePutSchema = z.object({
-  key: z.string().min(1).max(200),
+  key: z.enum(USER_STATE_KEYS),
   value: z.string().max(1_000_000),
 });

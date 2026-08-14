@@ -5,7 +5,7 @@ import { motion, useReducedMotion } from "motion/react";
 import { TASK_CATEGORY_LABEL, TIMELINE_BANDS } from "@/content/tasks";
 import { usePlanning } from "@/lib/store/planning";
 import { track } from "@/lib/analytics";
-import { daysUntil } from "@/lib/utils";
+import { daysUntil, parseLocalDate } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 /** Never changes, so the store never notifies. */
@@ -62,7 +62,7 @@ export function Timeline() {
         let when: string | null = null;
         let passed = false;
         if (weddingDate) {
-          const date = new Date(weddingDate);
+          const date = parseLocalDate(weddingDate);
           date.setMonth(date.getMonth() - Math.round(band.months));
           when = date.toLocaleDateString("en-GB", {
             month: "long",

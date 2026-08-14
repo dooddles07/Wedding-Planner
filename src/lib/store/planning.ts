@@ -32,6 +32,9 @@ export interface PlanningState {
   /* Budget */
   budgetTotal: number;
   budgetItems: BudgetItem[];
+  /** Categories the couple has manually re-allocated — rebuildBudget must
+   *  never recompute these away. Everything not in here tracks the model. */
+  overriddenCategories: string[];
   rebuildBudget: () => void;
   setAllocated: (category: string, value: number) => void;
   setSpent: (category: string, value: number) => void;
@@ -91,6 +94,7 @@ export const usePlanning = create<PlanningState>()(
         styleId: initial.styleId,
         planningLevel: initial.planningLevel,
       }),
+      overriddenCategories: [],
 
       tasks: seedTasks(),
 
@@ -119,12 +123,19 @@ export const usePlanning = create<PlanningState>()(
           planningLevel: state.planningLevel,
         });
 
-        // Both spend and manual allocation overrides are the couple’s own record — never recalculated away.
+        // Spend is always the couple's own record — never recalculated away.
+        // Allocation is only preserved for categories the couple has
+        // explicitly overridden via setAllocated; everything else must
+        // track the model, or the guest slider/total/style selector stop
+        // moving anything after the first build. See audit P1-4.
         const spendByCategory = new Map(
           state.budgetItems.map((item) => [item.category, item.spent]),
         );
+        const overridden = new Set(state.overriddenCategories);
         const allocByCategory = new Map(
-          state.budgetItems.map((item) => [item.category, item.allocated]),
+          state.budgetItems
+            .filter((item) => overridden.has(item.category))
+            .map((item) => [item.category, item.allocated]),
         );
 
         set({
@@ -147,6 +158,9 @@ export const usePlanning = create<PlanningState>()(
           budgetItems: get().budgetItems.map((item) =>
             item.category === category ? { ...item, allocated: Math.max(0, value) } : item,
           ),
+          overriddenCategories: get().overriddenCategories.includes(category)
+            ? get().overriddenCategories
+            : [...get().overriddenCategories, category],
         }),
 
       setSpent: (category, value) =>
@@ -194,6 +208,7 @@ export const usePlanning = create<PlanningState>()(
         set({
           ...initial,
           tasks: seedTasks(),
+          overriddenCategories: [],
           budgetItems: buildBudget({
             total: initial.budgetTotal,
             guestCount: initial.guestCount,

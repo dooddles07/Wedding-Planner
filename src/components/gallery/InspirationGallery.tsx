@@ -43,10 +43,16 @@ export function InspirationGallery() {
 
   const urlQuery = params.get("q") ?? "";
   const [query, setQuery] = useState(urlQuery);
-
-  useEffect(() => {
+  // Keeps `query` in sync when the URL changes from outside typing (back/
+  // forward navigation, a shared link) — adjusted during render rather than
+  // in an effect, which is the pattern React recommends for "reset state
+  // when a prop changes" and avoids the extra commit-then-effect render a
+  // useEffect(() => setQuery(urlQuery)) would cause. See audit P1-7.
+  const [prevUrlQuery, setPrevUrlQuery] = useState(urlQuery);
+  if (urlQuery !== prevUrlQuery) {
+    setPrevUrlQuery(urlQuery);
     setQuery(urlQuery);
-  }, [urlQuery]);
+  }
   const [openSlug, setOpenSlug] = useState<string | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [savedOnly, setSavedOnly] = useState(false);

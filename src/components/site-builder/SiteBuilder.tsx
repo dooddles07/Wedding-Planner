@@ -90,9 +90,10 @@ export function SiteBuilder() {
           {site.published ? (
             <button
               type="button"
-              onClick={() => {
-                unpublish();
-                toast("Taken down. Nobody can see it now.");
+              onClick={async () => {
+                const result = await unpublish();
+                if (result.ok) toast("Taken down. Nobody can see it now.");
+                else toast.error(result.error ?? "Could not take the page down.");
               }}
               className="min-h-11 border border-ink/25 px-5 font-mono text-[0.6875rem] tracking-[0.14em] uppercase transition-colors hover:border-ink"
             >
@@ -101,9 +102,10 @@ export function SiteBuilder() {
           ) : (
             <button
               type="button"
-              onClick={() => {
-                publish();
-                toast.success("Published. Send the link to whoever you like.");
+              onClick={async () => {
+                const result = await publish();
+                if (result.ok) toast.success("Published. Send the link to whoever you like.");
+                else toast.error(result.error ?? "Could not publish.");
               }}
               className="min-h-11 bg-ember px-6 font-mono text-[0.6875rem] tracking-[0.14em] text-ink uppercase transition-colors hover:bg-ink hover:text-champagne"
             >

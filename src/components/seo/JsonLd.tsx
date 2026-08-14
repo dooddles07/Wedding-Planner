@@ -6,8 +6,11 @@ export function JsonLd({ data }: { data: Record<string, unknown> | Record<string
   return (
     <script
       type="application/ld+json"
-      // Schema objects are built in our own code, never from user input.
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      // Schema objects are built in our own code, never from user input, so
+      // this isn't reachable today — but JSON.stringify doesn't neutralise
+      // a literal "</script>", so a future field sourced from content data
+      // (a title, a quote) could break out of the element. Defensive only.
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, "\\u003c") }}
     />
   );
 }
