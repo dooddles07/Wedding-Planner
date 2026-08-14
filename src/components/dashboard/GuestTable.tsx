@@ -220,7 +220,7 @@ export function GuestTable() {
               onClick={exportCsv}
               className="min-h-11 font-mono text-[0.6875rem] tracking-[0.14em] text-ink-70 uppercase underline-offset-4 hover:text-ink hover:underline"
             >
-              Export CSV
+              Download list
             </button>
           </div>
         </div>

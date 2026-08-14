@@ -159,7 +159,7 @@ export function BudgetPlanner() {
         <div>
           <div className="flex flex-wrap items-baseline gap-x-10 gap-y-4">
             <div>
-              <p className="eyebrow text-ink-50">Allocated</p>
+              <p className="eyebrow text-ink-50">Planned so far</p>
               <p className="mt-1.5 font-display text-3xl tabular-nums">
                 {formatCurrency(totals.allocated)}
               </p>
@@ -173,7 +173,7 @@ export function BudgetPlanner() {
             {Math.abs(difference) > 50 ? (
               <div>
                 <p className="eyebrow text-ink-50">
-                  {difference > 0 ? "Over" : "Unallocated"}
+                  {difference > 0 ? "Over" : "Left to plan"}
                 </p>
                 <p
                   className={cn(

@@ -23,7 +23,7 @@ export const BUDGET_BASE: { category: BudgetCategory; label: string; share: numb
   { category: "transport", label: "Getting people there", share: 0.02 },
   { category: "planner", label: "Planning", share: 0.08 },
   { category: "misc", label: "Everything else", share: 0.03 },
-  { category: "contingency", label: "Contingency", share: 0.05 },
+  { category: "contingency", label: "Just in case", share: 0.05 },
 ];
 
 export const BUDGET_NOTES: Partial<Record<BudgetCategory, string>> = {
