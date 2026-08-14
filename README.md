@@ -55,7 +55,6 @@ npm run dev
 | [`docs/DESIGN.md`](docs/DESIGN.md) | Color/type tokens, brand content, photography, accessibility |
 | [`docs/SECURITY.md`](docs/SECURITY.md) | Auth, rate limiting, ownership, XSS/injection fixes, audit trail |
 | [`docs/CHANGELOG.md`](docs/CHANGELOG.md) | Milestone-level project history |
-| [`docs/backend-integration.md`](docs/backend-integration.md) | Historical: the pre-backend handoff spec |
 | [`AGENTS.md`](AGENTS.md) / [`CLAUDE.md`](CLAUDE.md) | Instructions for AI coding agents working in this repo |
 | [`audit/`](audit) | The original 15-finding security/data-integrity audit |
 

@@ -59,8 +59,8 @@ callback guarded against an undefined token.
 ## 2026-08-13 — Backend integration
 
 The frontend (built 08-12) was frozen and a real backend wired in behind
-its existing seams (see `docs/backend-integration.md` for the original
-handoff spec those seams describe):
+its existing seams (`Repository`, `StateStorage`, `/api/lead`, the analytics
+sink):
 - Full auth, database persistence, and email wired end-to-end
   (`97473eb`–`e05c3d0`).
 - **Provider swap**: started on Supabase (`68d45cd`, "Wire full Supabase +

@@ -123,15 +123,3 @@ here.
 | `src/lib` | `auth.ts`, `auth/migrate-local-data.ts`, `db/{client,schema}.ts`, `email/`, `rate-limit.ts`, `ownership.ts`, `validation.ts`, `store/` (Zustand stores), `data/` (storage adapter), `utils.ts`, `analytics.ts`, `budget.ts`, `quiz.ts`, `seo.ts`, `fonts.ts` |
 | `src/content` | Static domain content (weddings, inspiration, venues, vendors, services, styles, faq, media, brand) — see `docs/DESIGN.md` |
 | `src/types` | Domain model shared by content and UI |
-
-## Historical note: `docs/backend-integration.md`
-
-That file is the handoff spec written when the frontend was a static demo
-with no backend — no auth, `localStorage`-only state, a stubbed `/api/lead`.
-It describes the "four seams" (`Repository`, `StateStorage`, `/api/lead`,
-the analytics sink) as *the things to implement*. They have since been
-implemented as described above — real auth, a real database behind
-`StateStorage`, a real `/api/lead`. The file is kept for historical context
-(it's still an accurate description of the frontend's original contracts)
-but its claims about auth and persistence being absent are superseded by
-this document.

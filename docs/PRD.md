@@ -50,14 +50,6 @@ schedule, travel, accommodation, dress code, registry, gallery, and an
 optional RSVP form (`POST /api/rsvp`) that a couple can enable/disable per
 site. Not indexed by search engines by design (`src/app/robots.ts`).
 
-## Current state vs. the original handoff spec
-`docs/backend-integration.md` describes the pre-backend state of the app:
-no auth, RSVP as "a disabled button with a visible note," `/api/lead` as a
-stub that only logs. All three are now real — see `docs/ARCHITECTURE.md`,
-`docs/API.md`, and `docs/SECURITY.md`. That document is kept for historical
-context on the frontend's original contracts, not as a description of
-current scope.
-
 ## Explicitly out of scope / demo status
 - **All directory content is invented.** Weddings, venues, vendors, and
   couples shown across the site are demo data, disclosed in-UI via
