@@ -128,13 +128,17 @@ export function buildResult(answers: QuizAnswers): QuizResult {
     .filter((item) => item.styleIds.includes(primary.id) || item.styleIds.includes(secondary.id))
     .slice(0, 6);
 
+  // Taglines are written as standalone sentences ("Wind is part of it. Plan
+  // for the wind."), so lowercasing the whole thing to fold it into a larger
+  // sentence leaves stray lowercase sentence-starts. Only the leading letter
+  // needs to change case.
+  const clause = secondary.tagline.replace(/\.$/, "");
+  const secondaryClause = clause.charAt(0).toLowerCase() + clause.slice(1);
+
   return {
     direction: describeDirection(answers, primary.id, secondary.id),
     headline: `${primary.name} with a bit of ${secondary.name.toLowerCase()}`,
-    summary: `${primary.description} Underneath it there is something of the ${secondary.name.toLowerCase()} wedding too — ${secondary.tagline.replace(
-      /\.$/,
-      "",
-    ).toLowerCase()} — and that pairing usually means the venue matters more than the styling.`,
+    summary: `${primary.description} Underneath it there is something of the ${secondary.name.toLowerCase()} wedding too — ${secondaryClause} — and that pairing usually means the venue matters more than the styling.`,
     primaryStyle: primary,
     supportingStyles: [secondary, third],
     recommendedServiceSlug: serviceSlug,
