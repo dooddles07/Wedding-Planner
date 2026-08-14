@@ -18,3 +18,19 @@ export async function checkRateLimit(request: Request, scope: string) {
   const { success } = await limiter.limit(`${scope}:${ip}`);
   return success;
 }
+
+/**
+ * A looser limiter for authenticated, per-user write endpoints that save on
+ * every keystroke (e.g. the site builder's autosave) — generous enough not
+ * to throttle normal typing, tight enough to stop a scripted hammering loop.
+ */
+const userLimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(60, "10 s"),
+  analytics: false,
+});
+
+export async function checkUserRateLimit(userId: string, scope: string) {
+  const { success } = await userLimiter.limit(`${scope}:${userId}`);
+  return success;
+}

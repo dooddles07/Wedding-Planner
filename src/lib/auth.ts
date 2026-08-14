@@ -24,13 +24,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     verifyRequest: "/login/verify",
     error: "/login",
   },
+  session: { strategy: "database" },
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) token.id = user.id;
-      return token;
-    },
-    async session({ session, token }) {
-      if (session.user && token?.id) session.user.id = token.id as string;
+    async session({ session, user }) {
+      if (session.user && user?.id) session.user.id = user.id;
       return session;
     },
   },

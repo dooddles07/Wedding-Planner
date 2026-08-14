@@ -3,11 +3,13 @@ import { and, eq } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db/client";
 import { userState } from "@/lib/db/schema";
+import { checkUserRateLimit } from "@/lib/rate-limit";
 import { userStatePutSchema as putSchema } from "@/lib/validation";
 
 export async function GET(request: Request) {
   const session = await auth();
-  if (!session?.user?.id) return NextResponse.json({ value: null });
+  if (!session?.user?.id)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { searchParams } = new URL(request.url);
   const key = searchParams.get("key");
@@ -28,6 +30,9 @@ export async function PUT(request: Request) {
     const session = await auth();
     if (!session?.user?.id)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    if (!(await checkUserRateLimit(session.user.id, "user-state-put")))
+      return NextResponse.json({ error: "too many requests" }, { status: 429 });
 
     const body = await request.json();
     const parsed = putSchema.safeParse(body);
@@ -55,6 +60,9 @@ export async function DELETE(request: Request) {
     const session = await auth();
     if (!session?.user?.id)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    if (!(await checkUserRateLimit(session.user.id, "user-state-delete")))
+      return NextResponse.json({ error: "too many requests" }, { status: 429 });
 
     const { searchParams } = new URL(request.url);
     const key = searchParams.get("key");
