@@ -44,4 +44,4 @@ next-env.d.ts
 /public/__*
 
 # local agent settings
-/.claude/settings.local.json
+/.claude/
