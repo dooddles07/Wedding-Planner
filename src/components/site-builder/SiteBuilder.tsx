@@ -43,9 +43,9 @@ export function SiteBuilder() {
   const partnerTwo = usePlanning((state) => state.partnerTwo);
   const weddingDate = usePlanning((state) => state.weddingDate);
 
-  if (!hydrated) return null;
-
   const [tab, setTab] = useState<"edit" | "preview">("edit");
+
+  if (!hydrated) return null;
 
   const url = `${brand.url}/w/${site.slug || "your-names"}`;
 
