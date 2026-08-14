@@ -58,10 +58,15 @@ export function Quiz() {
     setAnswers((prev) => ({ ...prev, [id]: value }));
   }
 
-  function advance() {
+  // Takes the answers explicitly rather than reading the `answers` state
+  // closed over at render time — `choose()` schedules this via setTimeout
+  // right after recording a selection, so the closure would still see the
+  // pre-selection answers and the final question's pick would be missing
+  // from the result. See audit P1-5.
+  function advance(currentAnswers: QuizAnswers) {
     track({ name: "quiz_step", step: step + 1, questionId: question.id });
     if (step + 1 >= quizQuestions.length) {
-      const built = buildResult(answers);
+      const built = buildResult(currentAnswers);
       track({ name: "quiz_completed", primaryStyle: built.primaryStyle.id });
       setShowResult(true);
       window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
@@ -72,9 +77,10 @@ export function Quiz() {
 
   function choose(id: string, value: string, multiple: boolean) {
     if (!multiple) {
+      const next = { ...answers, [id]: value };
       record(id, value);
       // Let the selection register visually before moving on.
-      setTimeout(advance, reduced ? 0 : 220);
+      setTimeout(() => advance(next), reduced ? 0 : 220);
       return;
     }
 
@@ -169,7 +175,7 @@ export function Quiz() {
           {question.multiple || question.optional ? (
             <button
               type="button"
-              onClick={advance}
+              onClick={() => advance(answers)}
               className="inline-flex min-h-11 items-center gap-3 bg-ember px-6 font-mono text-[0.6875rem] tracking-[0.14em] text-ink uppercase transition-colors hover:bg-ink hover:text-champagne"
             >
               {hasAnswer ? "Next" : "Skip"}

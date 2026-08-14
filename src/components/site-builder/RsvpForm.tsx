@@ -94,7 +94,11 @@ export function RsvpForm({
               min={1}
               max={20}
               value={guests}
-              onChange={(e) => setGuests(Number(e.target.value))}
+              // A cleared field is Number("") = NaN, which JSON.stringify
+              // serializes to null and the server's z.number() rejects —
+              // the couple sees a generic send failure. Fall back to 1
+              // rather than let the field go invalid. See audit P2-5.
+              onChange={(e) => setGuests(Number(e.target.value) || 1)}
               className="min-h-11 w-20 border-b border-ink/25 bg-transparent py-2 font-sans text-base outline-none focus:border-ink"
             />
           )}

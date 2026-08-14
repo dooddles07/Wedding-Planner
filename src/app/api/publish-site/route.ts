@@ -5,12 +5,16 @@ import { db } from "@/lib/db/client";
 import { weddingSites } from "@/lib/db/schema";
 import { publishSiteSchema as schema } from "@/lib/validation";
 import { canClaimSlug } from "@/lib/ownership";
+import { checkUserRateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
   try {
     const session = await auth();
     if (!session?.user?.id)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    if (!(await checkUserRateLimit(session.user.id, "publish-site")))
+      return NextResponse.json({ error: "too many requests" }, { status: 429 });
 
     const body = await request.json();
     if (typeof body !== "object" || body === null || Array.isArray(body)) {
@@ -40,12 +44,20 @@ export async function POST(request: Request) {
     }
 
     const [existing] = await db
-      .select({ userId: weddingSites.userId })
+      .select({ userId: weddingSites.userId, published: weddingSites.published })
       .from(weddingSites)
       .where(eq(weddingSites.slug, slug))
       .limit(1);
 
-    if (!canClaimSlug(existing?.userId, session.user.id)) {
+    // A published site whose owner account was later deleted has userId
+    // NULL (schema's onDelete: "set null"), which canClaimSlug alone would
+    // read as unowned/claimable — letting anyone seize a live page. A
+    // published row is never up for grabs regardless of owner state.
+    // See audit P0-3.
+    if (
+      (existing?.published && existing.userId !== session.user.id) ||
+      !canClaimSlug(existing?.userId, session.user.id)
+    ) {
       return NextResponse.json(
         { error: "slug already taken" },
         { status: 409 },

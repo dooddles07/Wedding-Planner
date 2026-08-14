@@ -16,7 +16,7 @@ const nextConfig: NextConfig = {
     imageSizes: [96, 160, 240, 320, 420],
   },
   experimental: {
-    optimizePackageImports: ["lucide-react", "recharts", "date-fns"],
+    optimizePackageImports: ["lucide-react", "date-fns"],
   },
   async headers() {
     return [

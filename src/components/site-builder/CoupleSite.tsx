@@ -1,7 +1,7 @@
 import type { WeddingSite } from "@/types";
 import { Photo } from "@/components/editorial/Photo";
 import { RsvpForm } from "./RsvpForm";
-import { cn, safeExternalUrl } from "@/lib/utils";
+import { cn, parseLocalDate, safeExternalUrl } from "@/lib/utils";
 
 /**
  * The couple’s published site.
@@ -26,18 +26,15 @@ export function CoupleSite({
       : site.partnerOne || site.partnerTwo || "Your names";
 
   const date = site.date
-    ? (() => {
-        const [y, m, d] = site.date!.split("-").map(Number);
-        return new Date(y, m - 1, d).toLocaleDateString("en-GB", {
-          weekday: "long",
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-        });
-      })()
+    ? parseLocalDate(site.date).toLocaleDateString("en-GB", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
     : null;
 
-  const skin = {
+  const skins = {
     "first-light": {
       shell: "bg-ink text-paper",
       panel: "bg-ink",
@@ -65,7 +62,11 @@ export function CoupleSite({
       display: "font-display text-[clamp(2rem,6vw,4.5rem)] font-light",
       overlay: 10,
     },
-  }[site.template];
+  };
+  // Falls back to a known skin rather than throwing when `site.template` is
+  // a persisted value that no longer matches a template id (stale storage,
+  // a renamed template) — see audit P2-2.
+  const skin = skins[site.template] ?? skins["first-light"];
 
   return (
     <div className={cn(skin.shell, preview ? "" : "min-h-dvh")}>
@@ -116,9 +117,9 @@ export function CoupleSite({
           <section className={cn("border-b py-12", skin.rule)}>
             <h2 className="eyebrow mb-7 opacity-60">The day</h2>
             <ol>
-              {site.schedule.map((entry, index) => (
+              {site.schedule.map((entry) => (
                 <li
-                  key={`${entry.time}-${index}`}
+                  key={entry.id ?? entry.time}
                   className={cn("flex gap-6 border-b py-4 last:border-0", skin.rule)}
                 >
                   <time className="w-16 shrink-0 font-mono text-sm tabular-nums opacity-70">

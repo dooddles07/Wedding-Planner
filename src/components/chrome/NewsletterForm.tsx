@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { voice } from "@/content/brand";
@@ -24,6 +24,12 @@ export function NewsletterForm({
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [state, setState] = useState<"idle" | "sending" | "done">("idle");
+  // Derived per instance — this component is reusable (see `location`
+  // prop), and two hard-coded ids on one page (e.g. footer + inline CTA)
+  // would collide, breaking label association and aria-describedby. See
+  // audit P2-7.
+  const inputId = useId();
+  const errorId = useId();
 
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -72,8 +78,6 @@ export function NewsletterForm({
     );
   }
 
-  const errorId = "newsletter-error";
-
   return (
     <form onSubmit={onSubmit} className={cn("w-full", className)} noValidate>
       <div
@@ -83,11 +87,11 @@ export function NewsletterForm({
           error && "border-ember",
         )}
       >
-        <label htmlFor="newsletter-email" className="sr-only">
+        <label htmlFor={inputId} className="sr-only">
           Email address
         </label>
         <input
-          id="newsletter-email"
+          id={inputId}
           type="email"
           inputMode="email"
           autoComplete="email"

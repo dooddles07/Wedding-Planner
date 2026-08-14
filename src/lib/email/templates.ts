@@ -1,6 +1,11 @@
 import type { Lead, Inquiry } from "@/types";
 import { escapeHtml as esc } from "./escape";
 
+// Resend's JSON API (not raw SMTP) means CR/LF in a subject can't forge
+// extra headers the way it could over SMTP — this is defense-in-depth, not
+// a fix for an exploitable path today.
+const subjectSafe = (value: string) => esc(value).replace(/[\r\n]+/g, " ");
+
 export type RsvpPayload = {
   siteSlug: string;
   name: string;
@@ -18,7 +23,7 @@ export function buildLeadEmail(lead: Lead) {
   return {
     from: "Marram <onboarding@resend.dev>",
     to: "hello@marram.studio",
-    subject: `New enquiry — ${esc(lead.source)}`,
+    subject: `New enquiry — ${subjectSafe(lead.source)}`,
     html: base(`
       <h2 style="font-weight:300;margin-top:0">New enquiry</h2>
       <table style="width:100%;border-collapse:collapse">
@@ -39,7 +44,7 @@ export function buildInquiryEmail(inquiry: Inquiry) {
   return {
     from: "Marram <onboarding@resend.dev>",
     to: "hello@marram.studio",
-    subject: `Enquiry about ${esc(inquiry.targetSlug)} (${esc(inquiry.targetType)})`,
+    subject: `Enquiry about ${subjectSafe(inquiry.targetSlug)} (${subjectSafe(inquiry.targetType)})`,
     html: base(`
       <h2 style="font-weight:300;margin-top:0">Venue/vendor enquiry</h2>
       <table style="width:100%;border-collapse:collapse">
@@ -58,7 +63,7 @@ export function buildRsvpEmail(rsvp: RsvpPayload, coupleEmail: string) {
   return {
     from: "Marram <onboarding@resend.dev>",
     to: coupleEmail,
-    subject: `RSVP from ${esc(rsvp.name)}`,
+    subject: `RSVP from ${subjectSafe(rsvp.name)}`,
     html: base(`
       <h2 style="font-weight:300;margin-top:0">New RSVP for your wedding</h2>
       <table style="width:100%;border-collapse:collapse">

@@ -52,15 +52,22 @@ export function safeExternalUrl(url: string | null | undefined) {
   }
 }
 
+/**
+ * Parses a `YYYY-MM-DD` wedding date as a local calendar date, not a UTC
+ * instant. `new Date("YYYY-MM-DD")` parses as UTC midnight, which reads a
+ * day (or, near a month boundary, a month) early for anyone west of UTC —
+ * every caller that turns a stored date into a displayed one should go
+ * through this rather than the `new Date(string)` constructor. See audit
+ * P2-6.
+ */
+export function parseLocalDate(date: string): Date {
+  const [y, m, d] = date.split("-").map(Number);
+  return new Date(y, m - 1, d);
+}
+
 /** Whole days from today until the given date. Negative once it has passed. */
 export function daysUntil(date: Date | string) {
-  let target: Date;
-  if (typeof date === "string") {
-    const [y, m, d] = date.split("-").map(Number);
-    target = new Date(y, m - 1, d);
-  } else {
-    target = date;
-  }
+  const target = typeof date === "string" ? parseLocalDate(date) : date;
   const startOfDay = (d: Date) =>
     new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
   const msPerDay = 86_400_000;

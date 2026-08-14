@@ -12,7 +12,7 @@ const schema = z.object({
   email: z.union([z.email(), z.literal("")]).optional(),
   attending: z.boolean(),
   guests: z.number().min(1).max(20).default(1),
-  message: z.string().optional(),
+  message: z.string().max(2000).optional(),
 });
 
 export async function POST(request: Request) {
@@ -29,6 +29,24 @@ export async function POST(request: Request) {
 
     const data = parsed.data;
 
+    // Only accept RSVPs for sites that are actually live and have RSVPs
+    // turned on — otherwise an attacker who knows a couple's slug can keep
+    // POSTing after they've unpublished or disabled RSVPs, each one
+    // emailing the couple. See audit P1-6.
+    const [targetSite] = await db
+      .select({ userId: weddingSites.userId, published: weddingSites.published, data: weddingSites.data })
+      .from(weddingSites)
+      .where(eq(weddingSites.slug, data.siteSlug))
+      .limit(1);
+
+    const rsvpEnabled =
+      Boolean(targetSite?.published) &&
+      (targetSite?.data as { rsvpEnabled?: boolean } | null)?.rsvpEnabled !== false;
+
+    if (!targetSite || !rsvpEnabled) {
+      return NextResponse.json({ error: "RSVPs are not open for this site" }, { status: 404 });
+    }
+
     await db.insert(rsvps).values({
       siteSlug: data.siteSlug,
       name: data.name,
@@ -38,17 +56,11 @@ export async function POST(request: Request) {
       message: data.message || null,
     });
 
-    const [site] = await db
-      .select({ userId: weddingSites.userId })
-      .from(weddingSites)
-      .where(eq(weddingSites.slug, data.siteSlug))
-      .limit(1);
-
-    if (site?.userId) {
+    if (targetSite.userId) {
       const [owner] = await db
         .select({ email: users.email })
         .from(users)
-        .where(eq(users.id, site.userId))
+        .where(eq(users.id, targetSite.userId))
         .limit(1);
 
       if (owner?.email) {

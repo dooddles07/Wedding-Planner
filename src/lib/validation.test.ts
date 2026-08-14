@@ -129,13 +129,13 @@ describe("publishSiteSchema", () => {
 describe("userStatePutSchema", () => {
   it("accepts a valid key/value pair", () => {
     expect(
-      userStatePutSchema.safeParse({ key: "budget", value: "{}" }).success,
+      userStatePutSchema.safeParse({ key: "planning", value: "{}" }).success,
     ).toBe(true);
   });
 
   it("rejects a non-string value", () => {
     expect(
-      userStatePutSchema.safeParse({ key: "budget", value: { foo: "bar" } })
+      userStatePutSchema.safeParse({ key: "planning", value: { foo: "bar" } })
         .success,
     ).toBe(false);
   });
@@ -144,5 +144,12 @@ describe("userStatePutSchema", () => {
     expect(userStatePutSchema.safeParse({ key: "", value: "{}" }).success).toBe(
       false,
     );
+  });
+
+  it("rejects a key outside the managed allowlist", () => {
+    expect(
+      userStatePutSchema.safeParse({ key: "anything-goes", value: "{}" })
+        .success,
+    ).toBe(false);
   });
 });
