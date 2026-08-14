@@ -14,7 +14,13 @@ const schema = z.object({
   email: z.email("That address doesn’t look right."),
   weddingDate: z.string().optional(),
   location: z.string().optional(),
-  guestCount: z.string().optional(),
+  guestCount: z
+    .string()
+    .optional()
+    .refine(
+      (value) => !value || (Number(value) >= 2 && Number(value) <= 2000),
+      "Somewhere between 2 and 2000, please.",
+    ),
   message: z.string().optional(),
 });
 
