@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
+import { Field } from "@/components/forms/Field";
 import { cn } from "@/lib/utils";
 
 export function RsvpForm({
@@ -18,6 +19,7 @@ export function RsvpForm({
   const [email, setEmail] = useState("");
   const [guests, setGuests] = useState(1);
   const [message, setMessage] = useState("");
+  const attendingId = useId();
 
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -46,70 +48,84 @@ export function RsvpForm({
 
   return (
     <form onSubmit={onSubmit} className="mx-auto mt-8 max-w-sm space-y-5 text-left">
-      <div>
-        <label className="eyebrow text-ink-50">Your name</label>
-        <input
-          required
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="mt-2 block min-h-11 w-full border-b border-ink/25 bg-transparent py-2 font-sans text-base outline-none transition-colors placeholder:text-ink-50 focus:border-ink"
-          placeholder="Name"
-        />
-      </div>
+      <Field label="Your name">
+        {(props) => (
+          <input
+            {...props}
+            required
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="min-h-11 w-full border-b border-ink/25 bg-transparent py-2 font-sans text-base outline-none transition-colors placeholder:text-ink-50 focus:border-ink"
+            placeholder="Name"
+          />
+        )}
+      </Field>
 
-      <div className="flex gap-3">
-        {[true, false].map((val) => (
-          <button
-            key={String(val)}
-            type="button"
-            onClick={() => setAttending(val)}
-            className={cn(
-              "min-h-11 flex-1 border font-mono text-[0.6875rem] tracking-[0.14em] uppercase transition-colors",
-              attending === val
-                ? "border-ember bg-ember text-ink"
-                : "border-ink/25 hover:border-ink",
-            )}
-          >
-            {val ? "Yes, I'll be there" : "Sorry, can't make it"}
-          </button>
-        ))}
-      </div>
+      <fieldset>
+        <legend id={attendingId} className="eyebrow text-ink-50">
+          Will you be there?
+        </legend>
+        <div className="mt-2 flex gap-3" role="group" aria-labelledby={attendingId}>
+          {[true, false].map((val) => (
+            <button
+              key={String(val)}
+              type="button"
+              aria-pressed={attending === val}
+              onClick={() => setAttending(val)}
+              className={cn(
+                "min-h-11 flex-1 border font-mono text-[0.6875rem] tracking-[0.14em] uppercase transition-colors",
+                attending === val
+                  ? "border-ember bg-ember text-ink"
+                  : "border-ink/25 hover:border-ink",
+              )}
+            >
+              {val ? "Yes, I'll be there" : "Sorry, can't make it"}
+            </button>
+          ))}
+        </div>
+      </fieldset>
 
       {attending ? (
-        <div>
-          <label className="eyebrow text-ink-50">How many of you?</label>
-          <input
-            type="number"
-            min={1}
-            max={20}
-            value={guests}
-            onChange={(e) => setGuests(Number(e.target.value))}
-            className="mt-2 block min-h-11 w-20 border-b border-ink/25 bg-transparent py-2 font-sans text-base outline-none focus:border-ink"
-          />
-        </div>
+        <Field label="How many of you?">
+          {(props) => (
+            <input
+              {...props}
+              type="number"
+              min={1}
+              max={20}
+              value={guests}
+              onChange={(e) => setGuests(Number(e.target.value))}
+              className="min-h-11 w-20 border-b border-ink/25 bg-transparent py-2 font-sans text-base outline-none focus:border-ink"
+            />
+          )}
+        </Field>
       ) : null}
 
-      <div>
-        <label className="eyebrow text-ink-50">Email (optional)</label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="For the couple to reach you"
-          className="mt-2 block min-h-11 w-full border-b border-ink/25 bg-transparent py-2 font-sans text-base outline-none transition-colors placeholder:text-ink-50 focus:border-ink"
-        />
-      </div>
+      <Field label="Email" optional>
+        {(props) => (
+          <input
+            {...props}
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="For the couple to reach you"
+            className="min-h-11 w-full border-b border-ink/25 bg-transparent py-2 font-sans text-base outline-none transition-colors placeholder:text-ink-50 focus:border-ink"
+          />
+        )}
+      </Field>
 
-      <div>
-        <label className="eyebrow text-ink-50">Message (optional)</label>
-        <textarea
-          rows={3}
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          className="mt-2 block min-h-20 w-full resize-y border-b border-ink/25 bg-transparent py-2 font-sans text-base outline-none transition-colors placeholder:text-ink-50 focus:border-ink"
-          placeholder="Anything else for the couple"
-        />
-      </div>
+      <Field label="Message" optional>
+        {(props) => (
+          <textarea
+            {...props}
+            rows={3}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            className="min-h-20 w-full resize-y border-b border-ink/25 bg-transparent py-2 font-sans text-base outline-none transition-colors placeholder:text-ink-50 focus:border-ink"
+            placeholder="Anything else for the couple"
+          />
+        )}
+      </Field>
 
       {state === "failed" ? (
         <p role="alert" className="font-sans text-sm text-ember">
