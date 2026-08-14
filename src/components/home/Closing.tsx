@@ -1,6 +1,7 @@
 import { ParallaxPhoto } from "@/components/editorial/ParallaxPhoto";
 import { Reveal, FadeIn } from "@/components/editorial/Reveal";
 import { ButtonLink } from "@/components/ui/Button";
+import { nav } from "@/content/brand";
 
 /**
  * 23:50. Last dance.
@@ -54,8 +55,8 @@ export function Closing() {
               </p>
 
               <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <ButtonLink href="/contact" variant="primary" size="lg">
-                  Start planning
+                <ButtonLink href={nav.cta.href} variant="primary" size="lg">
+                  {nav.cta.label}
                 </ButtonLink>
                 <ButtonLink href="/weddings" variant="onDark" size="lg" arrow={false}>
                   Read another wedding

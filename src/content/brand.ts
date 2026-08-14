@@ -56,7 +56,7 @@ export const nav = {
     { label: "Planning", href: "/planning" },
     { label: "About", href: "/about" },
   ],
-  cta: { label: "Start planning", href: "/contact" },
+  cta: { label: "Talk to a planner", href: "/contact" },
 } as const;
 
 export const footerNav = [

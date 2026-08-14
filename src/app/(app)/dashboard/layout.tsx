@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { DashboardNav } from "@/components/dashboard/DashboardNav";
-import { Header } from "@/components/chrome/Header";
+import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { Container } from "@/components/editorial/Layout";
 import { signOut } from "./actions";
 
@@ -13,18 +13,9 @@ export default async function DashboardLayout({
 
   return (
     <>
-      <Header />
+      <DashboardHeader user={session.user} signOutAction={signOut} />
       <div aria-hidden className="h-19" />
-      <DashboardNav>
-        <form action={signOut}>
-          <button
-            type="submit"
-            className="font-mono text-[0.6875rem] tracking-[0.14em] text-ink-50 uppercase transition-colors hover:text-ink"
-          >
-            Sign out
-          </button>
-        </form>
-      </DashboardNav>
+      <DashboardNav />
       <main id="main" className="min-h-[60svh] pb-24">
         <Container>{children}</Container>
       </main>

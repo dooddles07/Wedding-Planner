@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import type { Session } from "next-auth";
 import { brand, nav } from "@/content/brand";
 import { Photo } from "@/components/editorial/Photo";
 import { Wordmark } from "./Wordmark";
@@ -17,9 +18,11 @@ import { Wordmark } from "./Wordmark";
 export function MobileMenu({
   open,
   onClose,
+  session,
 }: {
   open: boolean;
   onClose: () => void;
+  session: Session | null;
 }) {
   const panel = useRef<HTMLDivElement>(null);
   const restoreTo = useRef<HTMLElement | null>(null);
@@ -71,7 +74,10 @@ export function MobileMenu({
     };
   }, [open, onClose]);
 
-  const links = [...nav.primary, { label: "Services", href: "/services" }];
+  const accountLink = session?.user
+    ? { label: "Dashboard", href: "/dashboard" }
+    : { label: "Sign in", href: "/login" };
+  const links = [...nav.primary, { label: "Services", href: "/services" }, accountLink];
 
   return (
     <AnimatePresence>

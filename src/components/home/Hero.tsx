@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { getPhoto, photoUrl, tonePlaceholder } from "@/content/media";
-import { voice } from "@/content/brand";
+import { nav, voice } from "@/content/brand";
 import { ButtonLink } from "@/components/ui/Button";
 import { Reveal } from "@/components/editorial/Reveal";
 import { track } from "@/lib/analytics";
@@ -119,14 +119,14 @@ export function Hero() {
                 transition={{ delay: 0.88, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
               >
                 <ButtonLink
-                  href="/contact"
+                  href={nav.cta.href}
                   variant="primary"
                   size="lg"
                   onClick={() =>
-                    track({ name: "cta_click", label: "Start planning", location: "hero" })
+                    track({ name: "cta_click", label: nav.cta.label, location: "hero" })
                   }
                 >
-                  Start planning
+                  {nav.cta.label}
                 </ButtonLink>
                 <ButtonLink href="/weddings" variant="onDark" size="lg" arrow={false}>
                   Explore real weddings

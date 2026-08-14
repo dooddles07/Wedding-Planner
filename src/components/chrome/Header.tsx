@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getSession } from "next-auth/react";
+import type { Session } from "next-auth";
 import { nav } from "@/content/brand";
 import { cn } from "@/lib/utils";
 import { track } from "@/lib/analytics";
@@ -30,7 +32,23 @@ export function Header({ initialGround = "paper" }: { initialGround?: GroundName
   const open = openedAt === pathname;
   const setOpen = (next: boolean) => setOpenedAt(next ? pathname : null);
 
+  // Read client-side (not passed from the server layout) so marketing pages
+  // stay statically generated — a brief guest-state flash is an acceptable
+  // trade for that, and self-corrects within one request.
+  const [session, setSession] = useState<Session | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    getSession().then((s) => {
+      if (!cancelled) setSession(s);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const skin = ON_GROUND[ground] ?? ON_GROUND.paper;
+  const accountHref = session?.user ? "/dashboard" : "/login";
+  const accountLabel = session?.user ? "Dashboard" : "Sign in";
 
   return (
     <>
@@ -76,6 +94,13 @@ export function Header({ initialGround = "paper" }: { initialGround?: GroundName
 
           <div className="flex items-center gap-2">
             <Link
+              href={accountHref}
+              className="hidden py-2 font-mono text-[0.6875rem] tracking-[0.16em] uppercase opacity-72 transition-opacity hover:opacity-100 lg:inline-block"
+            >
+              {accountLabel}
+            </Link>
+
+            <Link
               href={nav.cta.href}
               onClick={() => track({ name: "cta_click", label: nav.cta.label, location: "header" })}
               className="hidden min-h-11 items-center bg-ember px-5 font-mono text-[0.6875rem] tracking-[0.16em] text-ink uppercase transition-colors duration-300 hover:bg-ink hover:text-champagne sm:inline-flex"
@@ -101,7 +126,7 @@ export function Header({ initialGround = "paper" }: { initialGround?: GroundName
         </div>
       </header>
 
-      <MobileMenu open={open} onClose={() => setOpen(false)} />
+      <MobileMenu open={open} onClose={() => setOpen(false)} session={session} />
     </>
   );
 }

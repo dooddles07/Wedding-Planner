@@ -1,6 +1,9 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
+import { toast } from "sonner";
+import { getSession } from "next-auth/react";
+import { usePathname, useRouter } from "next/navigation";
 import type { SaveableKind } from "@/types";
 import { useSaves } from "@/lib/store/saves";
 import { cn } from "@/lib/utils";
@@ -11,6 +14,30 @@ const LABEL: Record<SaveableKind, string> = {
   vendor: "this supplier",
   wedding: "this wedding",
 };
+
+const SAVE_HINT_KEY = "marram:save-hint-shown";
+
+async function maybeShowSaveHint(
+  router: ReturnType<typeof useRouter>,
+  pathname: string,
+) {
+  try {
+    if (window.localStorage.getItem(SAVE_HINT_KEY)) return;
+    const session = await getSession();
+    if (session?.user) return;
+
+    window.localStorage.setItem(SAVE_HINT_KEY, "1");
+    toast("Saved on this device", {
+      description: "Sign in and it'll follow you everywhere.",
+      action: {
+        label: "Sign in",
+        onClick: () => router.push(`/login?next=${encodeURIComponent(pathname)}`),
+      },
+    });
+  } catch {
+    // Never let this block or break the save itself.
+  }
+}
 
 /**
  * Keep something.
@@ -38,6 +65,8 @@ export function SaveButton({
   );
   const toggle = useSaves((state) => state.toggle);
   const reduced = useReducedMotion();
+  const router = useRouter();
+  const pathname = usePathname();
 
   const on = hydrated && saved;
 
@@ -47,7 +76,9 @@ export function SaveButton({
       onClick={(event) => {
         event.preventDefault();
         event.stopPropagation();
+        const wasSaved = saved;
         toggle(kind, slug);
+        if (!wasSaved) void maybeShowSaveHint(router, pathname);
       }}
       aria-pressed={on}
       className={cn(
