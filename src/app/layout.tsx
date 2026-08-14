@@ -52,7 +52,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en-GB" className={fontVariables}>
+    <html lang="en-GB" className={fontVariables} data-scroll-behavior="smooth">
       <body className="min-h-dvh bg-paper text-ink antialiased">
         <a
           href="#main"
