@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     if (!parsed.success) {
       return NextResponse.json({ error: "Invalid data" }, { status: 400 });
     }
-    const { slug, published } = parsed.data;
+    const { slug, published, ...siteData } = parsed.data;
 
     if (published === false) {
       await db
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
       .values({
         slug,
         userId: session.user.id,
-        data: body,
+        data: siteData,
         published: true,
         publishedAt: new Date(),
         updatedAt: new Date(),
@@ -66,7 +66,7 @@ export async function POST(request: Request) {
         target: weddingSites.slug,
         set: {
           userId: session.user.id,
-          data: body,
+          data: siteData,
           published: true,
           updatedAt: new Date(),
         },

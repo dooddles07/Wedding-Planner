@@ -34,6 +34,24 @@ export function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), Math.max(min, max));
 }
 
+/**
+ * Only ever hand back a URL a browser can safely navigate to.
+ *
+ * Used wherever an owner-supplied link (e.g. a registry URL) ends up in an
+ * `href` — blocks `javascript:`/`data:`/etc. schemes from user input.
+ */
+export function safeExternalUrl(url: string | null | undefined) {
+  if (!url) return null;
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "http:" || parsed.protocol === "https:"
+      ? url
+      : null;
+  } catch {
+    return null;
+  }
+}
+
 /** Whole days from today until the given date. Negative once it has passed. */
 export function daysUntil(date: Date | string) {
   let target: Date;

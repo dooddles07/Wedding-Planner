@@ -1,7 +1,7 @@
 import type { WeddingSite } from "@/types";
 import { Photo } from "@/components/editorial/Photo";
 import { RsvpForm } from "./RsvpForm";
-import { cn } from "@/lib/utils";
+import { cn, safeExternalUrl } from "@/lib/utils";
 
 /**
  * The couple’s published site.
@@ -176,9 +176,9 @@ export function CoupleSite({
             <p className={cn("font-sans text-[0.9375rem] leading-[1.7]", skin.muted)}>
               {site.registry}
             </p>
-            {site.registryUrl ? (
+            {safeExternalUrl(site.registryUrl) ? (
               <a
-                href={site.registryUrl}
+                href={safeExternalUrl(site.registryUrl)!}
                 target="_blank"
                 rel="noreferrer noopener"
                 className="mt-5 inline-flex min-h-11 items-center bg-ember px-6 font-mono text-[0.6875rem] tracking-[0.14em] text-ink uppercase"

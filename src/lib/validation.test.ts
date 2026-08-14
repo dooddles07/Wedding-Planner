@@ -6,6 +6,27 @@ import {
   userStatePutSchema,
 } from "./validation";
 
+const validSite = {
+  slug: "jane-and-john",
+  template: "first-light" as const,
+  partnerOne: "Jane",
+  partnerTwo: "John",
+  date: null,
+  location: "Devon",
+  venue: "The Barn",
+  story: "Once upon a time",
+  heroImageId: "first-light",
+  schedule: [{ time: "14:00", title: "Ceremony", detail: "" }],
+  travel: "",
+  accommodation: "",
+  dressCode: "",
+  registry: "",
+  registryUrl: "https://registry.example.com/jane-and-john",
+  galleryImageIds: [],
+  rsvpEnabled: true,
+  published: true,
+};
+
 describe("leadSchema", () => {
   it("accepts a minimal valid lead", () => {
     expect(
@@ -77,6 +98,31 @@ describe("publishSiteSchema", () => {
 
   it("rejects an empty slug", () => {
     expect(publishSiteSchema.safeParse({ slug: "" }).success).toBe(false);
+  });
+
+  it("accepts a full valid site payload", () => {
+    expect(publishSiteSchema.safeParse(validSite).success).toBe(true);
+  });
+
+  it("rejects a javascript: registryUrl", () => {
+    expect(
+      publishSiteSchema.safeParse({
+        ...validSite,
+        registryUrl: "javascript:alert(1)",
+      }).success,
+    ).toBe(false);
+  });
+
+  it("rejects an unknown template", () => {
+    expect(
+      publishSiteSchema.safeParse({ ...validSite, template: "evil" }).success,
+    ).toBe(false);
+  });
+
+  it("allows an empty registryUrl", () => {
+    expect(
+      publishSiteSchema.safeParse({ ...validSite, registryUrl: "" }).success,
+    ).toBe(true);
   });
 });
 
