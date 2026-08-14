@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import type { SaveableKind } from "@/types";
 import { useSaves } from "@/lib/store/saves";
 import { venueBySlug } from "@/content/venues";
@@ -31,8 +32,10 @@ export function SavedList({
   cta: string;
 }) {
   const hydrated = useSaves((state) => state.hydrated);
-  const items = useSaves((state) =>
-    state.items.filter((item) => item.kind === kind),
+  const allItems = useSaves((state) => state.items);
+  const items = useMemo(
+    () => allItems.filter((item) => item.kind === kind),
+    [allItems, kind],
   );
 
   if (!hydrated) {
