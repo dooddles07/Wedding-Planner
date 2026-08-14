@@ -113,7 +113,7 @@ export function RsvpForm({
 
       {state === "failed" ? (
         <p role="alert" className="font-sans text-sm text-ember">
-          Something went wrong. Please try again.
+          That didn’t send. Try again, or email the couple directly.
         </p>
       ) : null}
 

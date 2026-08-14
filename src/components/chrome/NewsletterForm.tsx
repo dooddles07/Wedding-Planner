@@ -53,7 +53,7 @@ export function NewsletterForm({
       toast.success(voice.newsletter.confirmation);
     } catch {
       setState("idle");
-      setError("Something went wrong. Please try again.");
+      setError("That didn’t send. Try again in a moment.");
     }
   }
 

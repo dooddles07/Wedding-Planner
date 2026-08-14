@@ -9,7 +9,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbSchema, pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Start planning",
+  title: "Talk to a planner",
   description:
     "Tell us when, and roughly where. We’ll come back with what’s possible and what it costs. Marram, wedding studio, Aldeburgh.",
   path: "/contact",
@@ -22,7 +22,7 @@ export default function ContactPage() {
       <JsonLd
         data={breadcrumbSchema([
           { name: "Home", path: "/" },
-          { name: "Start planning", path: "/contact" },
+          { name: "Talk to a planner", path: "/contact" },
         ])}
       />
 

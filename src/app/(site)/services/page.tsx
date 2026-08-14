@@ -13,7 +13,7 @@ import { formatCurrency } from "@/lib/utils";
 export const metadata: Metadata = pageMetadata({
   title: "Planning services",
   description:
-    "Full planning, partial planning, wedding-day management, destination weddings, design and styling, and venue and vendor sourcing. Fees, what’s included, and who each one suits.",
+    "Full planning, partial planning, day-of management, design and styling, and venue sourcing. Fees, what’s included, who each one suits.",
   path: "/services",
   imageKey: "long-table",
 });

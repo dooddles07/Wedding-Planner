@@ -20,20 +20,21 @@ export default function PrivacyPage() {
     {
       heading: "What stays in your browser",
       body: [
-        "The planning tools — checklist, budget, timeline, guest list, saved venues and images, and your wedding site — are stored in this browser using localStorage. They are not sent to us. We cannot see them. Clearing your browser data deletes them, and there is no copy to restore from.",
+        "The planning tools — checklist, budget, timeline, guest list, saved venues and images, and your wedding site — stay in this browser using localStorage, and we cannot see them. Clearing your browser data deletes them.",
+        "If you sign in, that same data is copied to a database so it follows you to another device. Signing in is optional and everything works without it — it only changes where the data lives, not what the tools do.",
       ],
     },
     {
       heading: "What you send us",
       body: [
         "If you fill in a form — the contact form, an enquiry, the guide, the newsletter — we receive what you typed and the context you were in when you sent it, such as which venue page you were on or the direction the quiz produced.",
-        "In this demonstration build that submission is logged by the server and kept in your browser. In a live version it would go to our inbox and our client records, and nowhere else. We do not sell it, and we do not share it with the suppliers on this site unless you ask us to introduce you.",
+        "That submission is stored in our database and emailed to us. We do not sell it, and we do not share it with the suppliers on this site unless you ask us to introduce you.",
       ],
     },
     {
       heading: "Cookies and tracking",
       body: [
-        "There are no advertising cookies and no third-party trackers on this site. The analytics layer is built but not connected to any provider — no events leave your browser.",
+        "We use Vercel Analytics to see which pages get read and which links get clicked. It does not use cookies and cannot identify you personally. There are no advertising cookies and no third-party trackers on this site.",
       ],
     },
     {

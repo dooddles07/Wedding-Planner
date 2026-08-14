@@ -142,10 +142,10 @@ export function Settings() {
           Where your data lives
         </h2>
         <p className="mt-3 max-w-[54ch] font-sans text-[0.9375rem] leading-[1.7] text-ink-70">
-          In this browser, on this device, and nowhere else. There is no account
-          and no server copy — which means it is private, and also that clearing
-          your browser data clears this. Export the guest list if you want
-          something that outlives it.
+          You&rsquo;re signed in, so this is synced to your account — it follows
+          you to another device. &ldquo;Start again&rdquo; below clears that
+          copy along with the one on this device. Export the guest list if you
+          want something that outlives either.
         </p>
 
         <div className="mt-7">

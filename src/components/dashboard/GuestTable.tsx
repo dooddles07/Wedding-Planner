@@ -474,8 +474,8 @@ export function GuestTable() {
       )}
 
       <p className="mt-10 font-mono text-[0.625rem] leading-relaxed tracking-wide text-ink-50">
-        Everything here is stored in this browser and nowhere else. Export the
-        CSV if you want a copy that outlives it.
+        Synced to your account, so it&rsquo;s here on any device you sign into.
+        Export the CSV if you want a copy that outlives it.
       </p>
     </div>
   );

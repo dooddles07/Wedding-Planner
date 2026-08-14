@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { signInWithEmail, signInWithGoogle } from "./actions";
 
-export const metadata: Metadata = { title: "Sign in" };
+export const metadata: Metadata = pageMetadata({
+  title: "Sign in",
+  description: "Sign in to Marram to keep your planning saved across every device.",
+  path: "/login",
+  noIndex: true,
+});
 
 export default async function LoginPage({
   searchParams,
@@ -26,7 +32,7 @@ export default async function LoginPage({
             role="alert"
             className="mt-6 border-l-2 border-ember pl-4 font-sans text-sm text-ink-70"
           >
-            Something went wrong. Please try again.
+            That link didn’t work. Try again, or use Google instead.
           </p>
         ) : null}
 

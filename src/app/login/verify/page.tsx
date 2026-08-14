@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Check your inbox" };
+export const metadata: Metadata = pageMetadata({
+  title: "Check your inbox",
+  description: "We sent you a sign-in link.",
+  path: "/login/verify",
+  noIndex: true,
+});
 
 export default async function VerifyRequestPage({
   searchParams,
