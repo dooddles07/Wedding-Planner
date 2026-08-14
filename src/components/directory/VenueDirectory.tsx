@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { VenueType, WeddingStyleId } from "@/types";
 import { VENUE_TYPE_LABEL, venueFacets, venues } from "@/content/venues";
 import { styleById } from "@/content/styles";
@@ -27,8 +27,52 @@ export function VenueDirectory() {
   const [styles, setStyles] = useState<WeddingStyleId[]>([]);
   const [savedOnly, setSavedOnly] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const sheetPanel = useRef<HTMLDivElement>(null);
 
   const savedItems = useSaves((state) => state.items);
+
+  // Escape closes the sheet, focus is trapped while it's open, and the page
+  // behind it can't scroll — matches the mobile menu and inspiration filters.
+  useEffect(() => {
+    if (!sheetOpen) return;
+    const { overflow } = document.body.style;
+    document.body.style.overflow = "hidden";
+
+    const focusables = () =>
+      Array.from(
+        sheetPanel.current?.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ) ?? [],
+      );
+    focusables()[0]?.focus();
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setSheetOpen(false);
+        return;
+      }
+      if (event.key !== "Tab") return;
+
+      const items = focusables();
+      if (items.length === 0) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = overflow;
+    };
+  }, [sheetOpen]);
 
   function toggle<T>(list: T[], set: (next: T[]) => void, value: T, facet: string) {
     set(list.includes(value) ? list.filter((item) => item !== value) : [...list, value]);
@@ -251,6 +295,7 @@ export function VenueDirectory() {
             onClick={() => setSheetOpen(false)}
           />
           <div
+            ref={sheetPanel}
             role="dialog"
             aria-modal="true"
             aria-label="Filters"

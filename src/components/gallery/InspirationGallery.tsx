@@ -348,11 +348,42 @@ function FilterSheet({
   onClear: () => void;
   count: number;
 }) {
+  const panel = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (!open) return;
     const { overflow } = document.body.style;
     document.body.style.overflow = "hidden";
-    const onKey = (event: KeyboardEvent) => event.key === "Escape" && onClose();
+
+    const focusables = () =>
+      Array.from(
+        panel.current?.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ) ?? [],
+      );
+    focusables()[0]?.focus();
+
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+        return;
+      }
+      if (event.key !== "Tab") return;
+
+      const items = focusables();
+      if (items.length === 0) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
     document.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = overflow;
@@ -372,6 +403,7 @@ function FilterSheet({
             onClick={onClose}
           />
           <motion.div
+            ref={panel}
             role="dialog"
             aria-modal="true"
             aria-label="Filters"
