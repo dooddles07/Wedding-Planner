@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { rsvps, users, weddingSites } from "@/lib/db/schema";
 import { sendRsvpEmail } from "@/lib/email/send";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const schema = z.object({
   siteSlug: z.string().min(1),
@@ -15,40 +16,50 @@ const schema = z.object({
 });
 
 export async function POST(request: Request) {
-  const body = await request.json();
-  const parsed = schema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json({ error: "Invalid data" }, { status: 400 });
-  }
+  try {
+    if (!(await checkRateLimit(request, "rsvp"))) {
+      return NextResponse.json({ error: "too many requests" }, { status: 429 });
+    }
 
-  const data = parsed.data;
+    const body = await request.json();
+    const parsed = schema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid data" }, { status: 400 });
+    }
 
-  await db.insert(rsvps).values({
-    siteSlug: data.siteSlug,
-    name: data.name,
-    email: data.email || null,
-    attending: data.attending,
-    guests: data.guests,
-    message: data.message || null,
-  });
+    const data = parsed.data;
 
-  const [site] = await db
-    .select({ userId: weddingSites.userId })
-    .from(weddingSites)
-    .where(eq(weddingSites.slug, data.siteSlug))
-    .limit(1);
+    await db.insert(rsvps).values({
+      siteSlug: data.siteSlug,
+      name: data.name,
+      email: data.email || null,
+      attending: data.attending,
+      guests: data.guests,
+      message: data.message || null,
+    });
 
-  if (site?.userId) {
-    const [owner] = await db
-      .select({ email: users.email })
-      .from(users)
-      .where(eq(users.id, site.userId))
+    const [site] = await db
+      .select({ userId: weddingSites.userId })
+      .from(weddingSites)
+      .where(eq(weddingSites.slug, data.siteSlug))
       .limit(1);
 
-    if (owner?.email) {
-      sendRsvpEmail(data, owner.email).catch(() => undefined);
-    }
-  }
+    if (site?.userId) {
+      const [owner] = await db
+        .select({ email: users.email })
+        .from(users)
+        .where(eq(users.id, site.userId))
+        .limit(1);
 
-  return NextResponse.json({ ok: true });
+      if (owner?.email) {
+        sendRsvpEmail(data, owner.email).catch((err) =>
+          console.error("rsvp email send failed", err),
+        );
+      }
+    }
+
+    return NextResponse.json({ ok: true });
+  } catch {
+    return NextResponse.json({ error: "bad request" }, { status: 400 });
+  }
 }

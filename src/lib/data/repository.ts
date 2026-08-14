@@ -9,7 +9,6 @@ import type { Inquiry, Lead } from "@/types";
 export interface Repository {
   createLead(input: Omit<Lead, "id" | "createdAt">): Promise<Lead>;
   createInquiry(input: Omit<Inquiry, "id" | "createdAt">): Promise<Inquiry>;
-  listLeads(): Promise<Lead[]>;
 }
 
 export const repository: Repository = {
@@ -30,12 +29,6 @@ export const repository: Repository = {
       body: JSON.stringify(input),
     });
     if (!res.ok) throw new Error("Failed to create inquiry");
-    return res.json();
-  },
-
-  async listLeads() {
-    const res = await fetch("/api/lead");
-    if (!res.ok) return [];
     return res.json();
   },
 };

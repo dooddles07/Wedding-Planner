@@ -41,3 +41,6 @@ next-env.d.ts
 # local QA artefacts
 /.playwright-mcp/
 /public/__*
+
+# local agent settings
+/.claude/settings.local.json
