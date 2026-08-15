@@ -14,4 +14,12 @@ describe("canClaimSlug", () => {
   it("rejects a non-owner claiming someone else's slug", () => {
     expect(canClaimSlug("user-1", "user-2")).toBe(false);
   });
+
+  it("rejects claiming a published orphaned slug", () => {
+    expect(canClaimSlug(null, "user-1", true)).toBe(false);
+  });
+
+  it("allows owner to reclaim their own published slug", () => {
+    expect(canClaimSlug("user-1", "user-1", true)).toBe(true);
+  });
 });

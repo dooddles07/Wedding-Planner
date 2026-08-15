@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { WeddingStory } from "@/types";
 import { Photo, type PhotoRatio } from "@/components/editorial/Photo";
-import { cn } from "@/lib/utils";
+import { cn, parseLocalDate } from "@/lib/utils";
 
 /**
  * A wedding story, in a list.
@@ -28,7 +28,7 @@ export function WeddingCard({
   const meta = [
     wedding.location,
     `${wedding.guestCount} guests`,
-    new Date(wedding.date).toLocaleDateString("en-GB", {
+    parseLocalDate(wedding.date).toLocaleDateString("en-GB", {
       month: "long",
       year: "numeric",
     }),

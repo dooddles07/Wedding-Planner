@@ -41,7 +41,7 @@ export async function POST(request: Request) {
 
     const rsvpEnabled =
       Boolean(targetSite?.published) &&
-      (targetSite?.data as { rsvpEnabled?: boolean } | null)?.rsvpEnabled !== false;
+      (targetSite?.data as { rsvpEnabled?: boolean } | null)?.rsvpEnabled === true;
 
     if (!targetSite || !rsvpEnabled) {
       return NextResponse.json({ error: "RSVPs are not open for this site" }, { status: 404 });

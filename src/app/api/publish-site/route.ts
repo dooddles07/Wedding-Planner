@@ -49,14 +49,8 @@ export async function POST(request: Request) {
       .where(eq(weddingSites.slug, slug))
       .limit(1);
 
-    // A published site whose owner account was later deleted has userId
-    // NULL (schema's onDelete: "set null"), which canClaimSlug alone would
-    // read as unowned/claimable — letting anyone seize a live page. A
-    // published row is never up for grabs regardless of owner state.
-    // See audit P0-3.
     if (
-      (existing?.published && existing.userId !== session.user.id) ||
-      !canClaimSlug(existing?.userId, session.user.id)
+      !canClaimSlug(existing?.userId, session.user.id, existing?.published ?? false)
     ) {
       return NextResponse.json(
         { error: "slug already taken" },

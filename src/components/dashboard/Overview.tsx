@@ -12,7 +12,7 @@ import { vendorBySlug } from "@/content/vendors";
 import { inspirationBySlug } from "@/content/inspiration";
 import { Photo } from "@/components/editorial/Photo";
 import { ButtonLink, TextLink } from "@/components/ui/Button";
-import { cn, daysUntil, formatCurrency, formatNumber } from "@/lib/utils";
+import { cn, daysUntil, formatCurrency, formatNumber, parseLocalDate } from "@/lib/utils";
 
 const subscribeToNothing = () => () => undefined;
 let cachedNow: number | null = null;
@@ -102,7 +102,7 @@ export function Overview() {
             {weddingDate ? (
               <>
                 {" · "}
-                {new Date(weddingDate).toLocaleDateString("en-GB", {
+                {parseLocalDate(weddingDate).toLocaleDateString("en-GB", {
                   day: "numeric",
                   month: "long",
                   year: "numeric",

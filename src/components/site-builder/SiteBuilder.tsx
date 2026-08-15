@@ -44,6 +44,7 @@ export function SiteBuilder() {
   const weddingDate = usePlanning((state) => state.weddingDate);
 
   const [tab, setTab] = useState<"edit" | "preview">("edit");
+  const [publishing, setPublishing] = useState(false);
 
   if (!hydrated) return null;
 
@@ -90,26 +91,38 @@ export function SiteBuilder() {
           {site.published ? (
             <button
               type="button"
+              disabled={publishing}
               onClick={async () => {
-                const result = await unpublish();
-                if (result.ok) toast("Taken down. Nobody can see it now.");
-                else toast.error(result.error ?? "Could not take the page down.");
+                setPublishing(true);
+                try {
+                  const result = await unpublish();
+                  if (result.ok) toast("Taken down. Nobody can see it now.");
+                  else toast.error(result.error ?? "Could not take the page down.");
+                } finally {
+                  setPublishing(false);
+                }
               }}
-              className="min-h-11 border border-ink/25 px-5 font-mono text-[0.6875rem] tracking-[0.14em] uppercase transition-colors hover:border-ink"
+              className="min-h-11 border border-ink/25 px-5 font-mono text-[0.6875rem] tracking-[0.14em] uppercase transition-colors hover:border-ink disabled:opacity-50"
             >
-              Take it down
+              {publishing ? "Working…" : "Take it down"}
             </button>
           ) : (
             <button
               type="button"
+              disabled={publishing}
               onClick={async () => {
-                const result = await publish();
-                if (result.ok) toast.success("Published. Send the link to whoever you like.");
-                else toast.error(result.error ?? "Could not publish.");
+                setPublishing(true);
+                try {
+                  const result = await publish();
+                  if (result.ok) toast.success("Published. Send the link to whoever you like.");
+                  else toast.error(result.error ?? "Could not publish.");
+                } finally {
+                  setPublishing(false);
+                }
               }}
-              className="min-h-11 bg-ember px-6 font-mono text-[0.6875rem] tracking-[0.14em] text-ink uppercase transition-colors hover:bg-ink hover:text-champagne"
+              className="min-h-11 bg-ember px-6 font-mono text-[0.6875rem] tracking-[0.14em] text-ink uppercase transition-colors hover:bg-ink hover:text-champagne disabled:opacity-50"
             >
-              Publish
+              {publishing ? "Publishing…" : "Publish"}
             </button>
           )}
         </div>

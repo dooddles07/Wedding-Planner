@@ -52,7 +52,10 @@ const serverStorage: StateStorage = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ key, value }),
     });
-    if (!res.ok) throw new Error(`user-state PUT failed: ${res.status}`);
+    if (!res.ok) {
+      window.dispatchEvent(new CustomEvent("marram:save-error", { detail: { key, status: res.status } }));
+      throw new Error(`user-state PUT failed: ${res.status}`);
+    }
   },
   async removeItem(key) {
     const res = await fetch(`/api/user-state?key=${encodeURIComponent(key)}`, {
@@ -71,7 +74,9 @@ const serverStorage: StateStorage = {
 let migrationReady: Promise<void> | null = null;
 function ensureMigrated(): Promise<void> {
   if (!migrationReady) {
-    migrationReady = migrateLocalDataIfNeeded().catch(() => undefined);
+    migrationReady = migrateLocalDataIfNeeded().catch(() => {
+      migrationReady = null;
+    });
   }
   return migrationReady;
 }

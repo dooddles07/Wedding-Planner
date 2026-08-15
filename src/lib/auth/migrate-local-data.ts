@@ -14,16 +14,17 @@ export async function migrateLocalDataIfNeeded() {
     const value = localStorage.getItem(PREFIX + key);
     if (!value) continue;
 
-    const existing = await fetch(`/api/user-state?key=${key}`).then((r) =>
-      r.json(),
-    );
+    const getRes = await fetch(`/api/user-state?key=${key}`);
+    if (!getRes.ok) return;
+    const existing = await getRes.json();
     if (existing.value) continue;
 
-    await fetch("/api/user-state", {
+    const putRes = await fetch("/api/user-state", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ key, value }),
     });
+    if (!putRes.ok) return;
   }
 
   localStorage.setItem(migrationKey, "1");

@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db/client";
 import { userState } from "@/lib/db/schema";
 import { checkUserRateLimit } from "@/lib/rate-limit";
-import { userStatePutSchema as putSchema } from "@/lib/validation";
+import { userStatePutSchema as putSchema, userStateKeySchema } from "@/lib/validation";
 
 export async function GET(request: Request) {
   const session = await auth();
@@ -69,14 +69,14 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: "too many requests" }, { status: 429 });
 
     const { searchParams } = new URL(request.url);
-    const key = searchParams.get("key");
-    if (!key)
-      return NextResponse.json({ error: "key required" }, { status: 400 });
+    const parsed = userStateKeySchema.safeParse(searchParams.get("key"));
+    if (!parsed.success)
+      return NextResponse.json({ error: "invalid key" }, { status: 400 });
 
     await db
       .delete(userState)
       .where(
-        and(eq(userState.userId, session.user.id), eq(userState.key, key)),
+        and(eq(userState.userId, session.user.id), eq(userState.key, parsed.data)),
       );
 
     return NextResponse.json({ ok: true });

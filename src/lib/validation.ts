@@ -82,7 +82,9 @@ export const publishSiteSchema = weddingSiteDataSchema
 // P2-1.
 const USER_STATE_KEYS = ["planning", "wedding-site", "saves", "leads", "inquiries"] as const;
 
+export const userStateKeySchema = z.enum(USER_STATE_KEYS);
+
 export const userStatePutSchema = z.object({
-  key: z.enum(USER_STATE_KEYS),
+  key: userStateKeySchema,
   value: z.string().max(1_000_000),
 });
