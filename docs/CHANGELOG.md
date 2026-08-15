@@ -5,6 +5,22 @@ Grouped by milestone rather than by individual commit — see `git log` for
 the full commit-level history. Version has stayed `0.1.0`
 (`package.json`) throughout; nothing below has been tagged as a release.
 
+## 2026-08-15 — Launch audit & production deploy
+
+Final review and nine targeted fixes before first production deployment:
+- **P0 (data-loss)**: migration fetches check `res.ok` and bail instead of
+  setting a permanent flag on failure; failed migration promise cleared for
+  retry; silent autosave failures now surface a toast to the user.
+- **P1 (validation / UX)**: DELETE `user-state` handler validates key against
+  Zod allowlist; `WeddingCard` and `Overview` use `parseLocalDate` to fix
+  timezone-shifted dates in western timezones; publish/unpublish buttons
+  disable during request to prevent double-clicks.
+- **P2 (defense-in-depth)**: RSVP route requires explicit `rsvpEnabled === true`
+  instead of treating `undefined` as enabled; orphaned-site ownership guard
+  moved into `canClaimSlug` for all future callers.
+
+First production deploy to Vercel (commit `2af7bac`).
+
 ## 2026-08-14 — Security & production hardening
 
 **Full-project audit, round two** (`ddee9e5`) — 20 zero-cost fixes across

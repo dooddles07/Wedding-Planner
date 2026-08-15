@@ -10,9 +10,11 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 # Marram
 
-Wedding studio site: public marketing/directory + an authenticated planning
-dashboard + per-couple publishable wedding sites (`/w/[slug]`). Full docs in
-`docs/` — read the relevant one before touching that area:
+Wedding studio site: public marketing and directory, an authenticated
+planning dashboard for engaged couples, and per-couple publishable wedding
+sites (`/w/[slug]`). Deployed on Vercel (Hobby plan, zero cost).
+
+Full docs in `docs/` — read the relevant one before touching that area:
 
 - `docs/ARCHITECTURE.md` — stack, route map, data flow, client/server state sync
 - `docs/DATABASE.md` — Drizzle schema, why each table is shaped the way it is
@@ -33,4 +35,7 @@ dashboard + per-couple publishable wedding sites (`/w/[slug]`). Full docs in
   there — check `docs/SECURITY.md` first.
 - Brand strings, nav, and voice copy live only in `src/content/brand.ts` —
   don't hardcode brand text elsewhere.
+- Date strings in YYYY-MM-DD format must be parsed with `parseLocalDate()`
+  from `src/lib/utils.ts`, never `new Date()` — the latter treats them as
+  UTC midnight, causing off-by-one display in western timezones.
 - Before considering a change done: `npm run lint && npm run typecheck && npm run test`.
